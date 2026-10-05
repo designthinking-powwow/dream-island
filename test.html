@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>夢遊扭蛋島｜以設計思考設計的人生探索遊戲</title>
+<meta name="description" content="心裡有點悶、又說不出為什麼的人，都會掉到這座島。約 3 分鐘，看看你心裡住著哪一隻守護獸。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://designthinking-powwow.github.io/dream-island/">
+<meta property="og:title" content="夢遊扭蛋島｜你心裡住著哪一隻守護獸？">
+<meta property="og:description" content="心裡有點悶、又說不出為什麼的人，都會掉到這座島。約 3 分鐘，免註冊。">
+<meta property="og:image" content="https://designthinking-powwow.github.io/dream-island/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="zh_TW">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<style>
+:root{
+  --bg:#141218; --bg-2:#1C1922; --surface:#211E28; --surface-2:#2A2633;
+  --line:rgba(255,255,255,.09); --line-2:rgba(255,255,255,.18);
+  --ink:#F5F3F8; --ink-2:#BDB7C9; --ink-3:#8C8699;
+  --c-a:#FF5FD2; --c-b:#8B5CFF; --zone:#8B5CFF;
+  --focus:#9DF7FF;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --bg:#141218; --bg-2:#1C1922; } }
+:root[data-theme="dark"]{ --bg:#141218; --bg-2:#1C1922; }
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0;min-height:100%;color:var(--ink);
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  background-color:var(--bg);
+  background-image:
+    radial-gradient(70% 40% at 50% -5%, color-mix(in srgb,var(--zone) 22%,transparent), transparent 70%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-attachment:fixed;
+  -webkit-font-smoothing:antialiased;
+  transition:background-color .6s;
+}
+::selection{background:var(--c-a);color:#141218}
+.app{position:relative;z-index:1;max-width:440px;margin:0 auto;padding:18px 20px 48px;min-height:100vh}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:3px;border-radius:12px}
+.hidden{display:none!important}
+
+/* particles per zone */
+.fx{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.fx i{position:absolute;top:-20px;width:8px;height:8px;border-radius:50%;opacity:0;background:var(--zone);filter:blur(.5px);animation:fall linear infinite}
+.fx.leaf i{border-radius:0 60% 0 60%;width:10px;height:10px;background:#5BE3A1}
+.fx.ripple i{top:auto;bottom:-10px;width:14px;height:14px;border:1.5px solid #7FD8FF;background:none;animation:rise linear infinite}
+.fx.fruit i{background:#FFB36B}
+.fx.echo i{top:auto;bottom:-10px;border:1.5px solid #C49BFF;background:none;width:16px;height:16px;animation:rise linear infinite}
+@keyframes fall{0%{transform:translateY(0) rotate(0);opacity:0}10%{opacity:.55}100%{transform:translateY(105vh) rotate(260deg);opacity:0}}
+@keyframes rise{0%{transform:translateY(0) scale(.6);opacity:0}15%{opacity:.5}100%{transform:translateY(-105vh) scale(1.4);opacity:0}}
+
+/* top bar */
+.brandbar{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--ink-3);margin-bottom:14px}
+.brandbar b{color:var(--ink-2);font-weight:700;letter-spacing:.04em}
+.zones{display:flex;gap:6px;margin:0 0 14px}
+.zones span{flex:1;height:3px;border-radius:3px;background:var(--line-2);transition:background .4s}
+.zones span.done{background:linear-gradient(90deg,var(--c-a),var(--c-b))}
+.zonename{font-size:13px;color:var(--ink-3);margin:-6px 0 10px;display:flex;justify-content:space-between}
+.zonename b{color:var(--ink);font-weight:700}
+
+/* toy stage */
+.stage{position:relative;display:grid;justify-items:center}
+.stage .beam{position:absolute;top:-30px;width:280px;height:320px;pointer-events:none;background:radial-gradient(50% 70% at 50% 0%, rgba(255,255,255,.13), transparent 75%)}
+.stage .halo{position:absolute;bottom:42px;width:220px;height:120px;border-radius:50%;
+  background:radial-gradient(closest-side, color-mix(in srgb,var(--c-a) 65%,transparent), color-mix(in srgb,var(--c-b) 30%,transparent) 60%, transparent);filter:blur(22px);opacity:.75}
+.stage .toy{position:relative;width:210px;height:210px;z-index:2;margin-bottom:-38px}
+.stage .ped{position:relative;width:230px;height:70px;z-index:1}
+.toy svg{display:block;width:100%;height:100%;transform-origin:50% 92%;animation:breathe 3.4s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(1,1)}50%{transform:scale(1.025,.975)}}
+.toy.nod svg{animation:nod .5s ease}
+@keyframes nod{0%{transform:translateY(0)}35%{transform:translateY(5px) scale(1.04,.95)}70%{transform:translateY(-3px)}100%{transform:none}}
+.toy.tilt svg{animation:tilt 1.2s ease}
+@keyframes tilt{0%,100%{transform:rotate(0)}30%,60%{transform:rotate(-8deg)}}
+.hatdrop .hat{animation:hatdrop .6s cubic-bezier(.3,1.6,.5,1)}
+@keyframes hatdrop{0%{transform:translateY(-70px);opacity:0}60%{opacity:1}100%{transform:none}}
+.morph svg{animation:morph .45s cubic-bezier(.3,1.6,.5,1)}
+@keyframes morph{0%{transform:scale(.7,1.2)}100%{transform:none}}
+
+/* typography / buttons */
+h1.hero{font-size:clamp(30px, calc((100vw - 40px) / 8.4), 44px);font-weight:900;line-height:1.12;letter-spacing:-.01em;margin:22px 0 12px}
+.lead{font-size:17px;line-height:1.75;color:var(--ink-2);margin:0 0 26px;max-width:21em}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;border:0;border-radius:16px;padding:16px 26px;font-size:17px;font-weight:700;color:#141218;background:var(--ink);
+  box-shadow:0 0 0 1px rgba(255,255,255,.2) inset, 0 10px 30px color-mix(in srgb,var(--c-a) 30%,transparent);transition:transform .15s ease, box-shadow .2s ease, opacity .2s}
+.btn::after{content:"";width:9px;height:9px;border-radius:50%;background:linear-gradient(135deg,var(--c-a),var(--c-b));box-shadow:0 0 10px var(--c-a)}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.btn.wide{width:100%}
+.ghost{border:1px solid var(--line-2);background:transparent;border-radius:16px;padding:14px 20px;font-size:16px;color:var(--ink-2)}
+.ghost:hover{border-color:var(--ink-2);color:var(--ink)}
+.linkbtn{background:none;border:0;color:var(--ink-3);font-size:13px;text-decoration:underline;padding:6px 0}
+.fine{font-size:12px;color:var(--ink-3);line-height:1.7;margin-top:20px}
+.meta{display:flex;gap:18px;font-size:14px;color:var(--ink-3);margin:16px 0 0}
+.meta b{color:var(--ink)}
+.center{text-align:center}
+.lineup{display:flex;justify-content:center;align-items:flex-end;margin:4px -6px 0;position:relative}
+.lineup .toy{width:118px;height:118px;position:relative;z-index:2}
+.lineup .toy.mid{width:140px;height:140px;margin-bottom:6px}
+.shelf{height:14px;margin:-10px 6px 0;border-radius:8px;background:linear-gradient(180deg,#2E2A37,#1E1B24);box-shadow:0 1px 0 rgba(255,255,255,.08) inset,0 16px 30px rgba(0,0,0,.45)}
+.friend-intro{display:flex;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:12px 14px;margin-bottom:6px}
+.friend-intro .toy{width:76px;height:76px;flex:none}
+.friend-intro p{margin:0;font-size:14px;color:var(--ink-2);line-height:1.6}
+.friend-intro b{color:var(--ink)}
+
+/* guide talk */
+.say{display:flex;gap:10px;align-items:flex-start;margin:0 0 6px;min-height:44px}
+.say svg{width:30px;height:34px;flex:none;margin-top:1px}
+.say p{margin:0;font-size:15px;line-height:1.6;color:var(--ink-2)}
+
+/* create */
+.tag{text-align:center;margin:14px 0 4px}
+.tag .n{font-size:24px;font-weight:900;min-height:34px}
+.tag .s{font-size:13px;color:var(--ink-3);min-height:18px}
+.progress{display:flex;gap:6px;margin:14px 0 14px}
+.progress span{flex:1;height:3px;border-radius:3px;background:var(--line-2)}
+.progress span.done{background:linear-gradient(90deg,var(--c-a),var(--c-b))}
+h2{font-size:20px;font-weight:700;margin:0 0 4px;line-height:1.45}
+.hint{font-size:14px;color:var(--ink-3);margin:0 0 14px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.opt{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px 9px;border-radius:14px;background:var(--surface);border:1px solid var(--line);font-size:13px;color:var(--ink-2);transition:border-color .2s,background .2s,transform .15s}
+.opt svg{width:54px;height:54px}
+.opt:hover{background:var(--surface-2)}
+.opt:active{transform:scale(.94)}
+.opt[aria-pressed="true"]{border-color:color-mix(in srgb,var(--c-a) 80%,#fff);color:var(--ink);background:var(--surface-2);box-shadow:0 0 0 1px color-mix(in srgb,var(--c-a) 60%,transparent) inset,0 0 18px color-mix(in srgb,var(--c-a) 25%,transparent)}
+.opt .q{width:54px;height:54px;display:grid;place-items:center;font-size:24px;font-weight:900;color:var(--ink-2);border-radius:50%;border:1.5px dashed var(--line-2)}
+.field{width:100%;font:inherit;font-size:16px;padding:13px 14px;border-radius:14px;border:1px solid var(--line-2);background:var(--bg-2);color:var(--ink)}
+.field::placeholder{color:var(--ink-3)}
+.field:focus{outline:none;border-color:var(--focus);box-shadow:0 0 0 3px rgba(157,247,255,.15)}
+select.field{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--ink-3) 50%),linear-gradient(135deg,var(--ink-3) 50%,transparent 50%);background-position:calc(100% - 20px) 55%,calc(100% - 15px) 55%;background-size:5px 5px;background-repeat:no-repeat}
+textarea.field{min-height:96px;resize:vertical;line-height:1.6}
+.swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:12px 8px}
+.sw{display:flex;flex-direction:column;align-items:center;gap:7px;background:none;border:0;padding:2px;font-size:12px;color:var(--ink-3)}
+.sw i{width:46px;height:46px;border-radius:50%;box-shadow:0 0 0 1px rgba(255,255,255,.15) inset;transition:transform .15s,box-shadow .2s}
+.sw[aria-pressed="true"]{color:var(--ink)}
+.sw[aria-pressed="true"] i{transform:scale(1.06);box-shadow:0 0 0 2px var(--bg),0 0 0 4px #fff,0 0 22px rgba(255,255,255,.35)}
+.ripplefx{position:fixed;width:20px;height:20px;border-radius:50%;pointer-events:none;z-index:5;border:2px solid var(--c-a);transform:translate(-50%,-50%)}
+.nav{display:flex;gap:10px;margin-top:18px}
+.nav .btn{flex:1}
+
+/* map */
+.map{width:100%;height:auto;display:block;margin:6px 0 10px}
+.map .route{stroke-dasharray:900;stroke-dashoffset:900;animation:draw 2.2s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.map .node{opacity:0;animation:pop .4s cubic-bezier(.3,1.6,.5,1) forwards}
+@keyframes pop{from{opacity:0;transform:scale(.3)}to{opacity:1;transform:none}}
+
+/* question */
+.qcomp{display:flex;align-items:flex-end;gap:12px;margin:4px 0 10px}
+.qcomp .toy{width:74px;height:74px;flex:none;margin:0}
+.qcomp .bubble{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:16px 16px 16px 4px;padding:10px 12px;font-size:14px;color:var(--ink-2);line-height:1.55;flex:1}
+.qcard{animation:slidein .35s ease}
+@keyframes slidein{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+.qcount{font-size:12px;color:var(--ink-3);margin-bottom:6px}
+.choices{display:grid;gap:10px;margin-top:14px}
+.choice{text-align:left;padding:15px 16px;border-radius:16px;background:var(--surface);border:1px solid var(--line);font-size:16px;line-height:1.5;color:var(--ink);transition:background .2s,border-color .2s,transform .12s}
+.choice:hover{background:var(--surface-2)}
+.choice[aria-pressed="true"]{border-color:color-mix(in srgb,var(--zone) 80%,#fff);background:color-mix(in srgb,var(--zone) 18%,var(--surface));box-shadow:0 0 18px color-mix(in srgb,var(--zone) 30%,transparent)}
+.choice.jelly{animation:jelly .4s ease}
+@keyframes jelly{0%{transform:scale(1)}30%{transform:scale(.96,1.04)}60%{transform:scale(1.02,.98)}100%{transform:scale(1)}}
+.choice small{display:block;color:var(--ink-3);font-size:12px;margin-top:2px}
+
+/* lake */
+.lake{position:relative;margin:18px 0 10px;padding:30px 20px 34px;border-radius:24px;text-align:center;overflow:hidden;
+  background:radial-gradient(120% 80% at 50% 120%, rgba(60,140,255,.35), transparent 60%), linear-gradient(180deg,#1A2140,#141830);border:1px solid rgba(127,216,255,.25)}
+.lake p{font-size:21px;line-height:1.7;font-weight:700;margin:0;min-height:3.4em}
+.lake p span{opacity:0;display:inline-block;transform:translateY(8px);filter:blur(3px);transition:opacity .4s,transform .4s,filter .4s}
+.lake p span.on{opacity:1;transform:none;filter:none}
+.lake .reflect{font-size:21px;line-height:1.7;font-weight:700;transform:scaleY(-1);opacity:.12;filter:blur(1.5px);margin-top:4px;-webkit-mask-image:linear-gradient(0deg,#000,transparent 70%);mask-image:linear-gradient(0deg,#000,transparent 70%)}
+
+/* gacha */
+.gstage{position:relative;height:400px;display:grid;place-items:center}
+.machine{width:240px;height:340px}
+.reveal{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
+.reveal .glow{position:absolute;width:260px;height:260px;border-radius:50%;background:radial-gradient(closest-side,var(--c-a),color-mix(in srgb,var(--c-b) 60%,transparent) 55%,transparent);filter:blur(26px);opacity:0}
+.reveal .beam2{position:absolute;width:120px;height:700px;opacity:0;background:linear-gradient(180deg,transparent,rgba(255,255,255,.35),transparent);filter:blur(10px)}
+.reveal .cap{position:absolute;width:140px;height:140px;opacity:0}
+.reveal .rchar{position:absolute;width:230px;height:230px;opacity:0}
+.reveal .flash{position:absolute;width:40px;height:40px;border-radius:50%;background:#fff;opacity:0}
+.spark{position:absolute;width:12px;height:12px;opacity:0}
+.marquee circle{animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:.25}}
+
+/* holo card */
+.card{position:relative;max-width:340px;margin:4px auto 16px;border-radius:24px;padding:1.5px;--mx:50%;--my:50%;--rx:0deg;--ry:0deg;
+  background:linear-gradient(160deg,color-mix(in srgb,var(--c-a) 90%,#fff),var(--c-b));
+  box-shadow:0 24px 60px rgba(0,0,0,.55),0 0 50px color-mix(in srgb,var(--c-a) 22%,transparent);
+  transform:perspective(900px) rotateX(var(--rx)) rotateY(var(--ry));transition:transform .2s ease-out;touch-action:pan-y}
+.card-in{position:relative;border-radius:23px;overflow:hidden;background:linear-gradient(180deg,#221E2A,#16141B)}
+.card-in::after{content:"";position:absolute;inset:0;pointer-events:none;mix-blend-mode:color-dodge;opacity:.35;
+  background:
+    radial-gradient(circle at var(--mx) var(--my), rgba(255,255,255,.55), transparent 35%),
+    linear-gradient(115deg, transparent 20%, rgba(255,95,210,.35) 35%, rgba(61,245,208,.35) 45%, rgba(242,255,77,.3) 55%, rgba(139,92,255,.35) 65%, transparent 80%);
+  background-size:100% 100%,250% 250%;background-position:center, var(--mx) var(--my);animation:shimmer 6s ease-in-out infinite}
+@keyframes shimmer{0%,100%{background-position:center,0% 0%}50%{background-position:center,100% 100%}}
+.card-top{display:flex;justify-content:space-between;padding:16px 18px 0;font-size:12px;color:var(--ink-3)}
+.card-top b{color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums}
+.card .stage .toy{width:196px;height:196px}
+.card-body{padding:4px 22px 16px;text-align:center}
+.card h3{font-size:25px;font-weight:900;margin:6px 0 2px}
+.card .title{font-size:15px;font-weight:700;background:linear-gradient(90deg,var(--c-a),var(--c-b));-webkit-background-clip:text;background-clip:text;color:transparent}
+.rare{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;color:#141218;background:linear-gradient(90deg,var(--c-a),var(--c-b));margin-left:6px;vertical-align:2px}
+.quote{font-size:16px;line-height:1.65;margin:12px 0 0;font-weight:500}
+.mark{display:flex;justify-content:space-between;gap:10px;align-items:center;border-top:1px solid var(--line);padding:12px 18px;font-size:11px;color:var(--ink-3)}
+.mark b{color:var(--ink-2);font-weight:700;text-align:right}
+.toggle{display:flex;justify-content:center;margin:-6px 0 14px}
+.share{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.sh{display:flex;align-items:center;justify-content:center;gap:7px;padding:13px 4px;border-radius:14px;border:1px solid var(--line-2);background:var(--surface);text-decoration:none;color:var(--ink);font-size:14px;font-weight:700}
+.sh svg{width:20px;height:20px}
+.sh:hover{background:var(--surface-2)}
+
+/* report */
+.section{margin:30px 0 0}
+.section h4{font-size:13px;color:var(--ink-3);font-weight:500;margin:0 0 8px;letter-spacing:.04em}
+.section h3{font-size:22px;font-weight:900;margin:0 0 10px;line-height:1.4}
+.section p{font-size:16px;line-height:1.85;color:var(--ink);margin:0 0 12px}
+.section p.soft{color:var(--ink-2)}
+.strengths{display:grid;gap:10px}
+.strengths div{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.strengths b{display:block;font-size:16px;margin-bottom:2px}
+.strengths span{font-size:14px;color:var(--ink-2);line-height:1.6}
+.locked{position:relative;border-radius:20px;border:1px dashed var(--line-2);padding:18px;background:var(--surface);overflow:hidden}
+.locked ul{margin:0;padding:0;list-style:none;display:grid;gap:10px;filter:blur(3.5px);user-select:none}
+.locked li{font-size:15px;color:var(--ink-2)}
+.locked .over{position:absolute;inset:0;display:grid;place-items:center;background:linear-gradient(180deg,transparent,rgba(20,18,24,.75))}
+.attrs{display:grid;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:18px}
+.attr{display:grid;grid-template-columns:72px 1fr 44px;align-items:center;gap:10px;font-size:14px}
+.attr .bar{height:10px;border-radius:10px;background:var(--bg-2);overflow:hidden}
+.attr .bar i{display:block;height:100%;width:0;border-radius:10px;background:linear-gradient(90deg,var(--c-a),var(--c-b));transition:width 1.1s cubic-bezier(.2,.8,.2,1)}
+.attr .lv{font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
+.attrs .cap{font-size:11px;color:var(--ink-3);text-align:right;margin-top:-2px}
+.voice{border-left:3px solid var(--c-a);padding:6px 0 6px 14px;margin:10px 0 14px}
+.voice p{margin:0 0 6px}
+.tasks{counter-reset:t;display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.tasks li{counter-increment:t;position:relative;padding:14px 14px 14px 52px;background:var(--surface);border:1px solid var(--line);border-radius:16px;font-size:15px;line-height:1.7}
+.tasks li::before{content:counter(t);position:absolute;left:14px;top:14px;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:13px;color:#141218;background:linear-gradient(135deg,var(--c-a),var(--c-b))}
+.wish{background:var(--surface);border-radius:16px;padding:14px 16px;font-size:15px;color:var(--ink-2);margin-bottom:12px}
+.wish b{color:var(--ink)}
+.partner{display:flex;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:14px}
+.partner .badge{flex:none;width:64px;height:64px;border-radius:18px;display:grid;place-items:center;font-size:28px;background:linear-gradient(135deg,var(--c-b),var(--c-a))}
+.partner p{margin:0;font-size:14px;line-height:1.7;color:var(--ink-2)}
+.partner b{color:var(--ink);font-size:16px}
+.egg{border-radius:22px;padding:22px 18px;background:linear-gradient(160deg,color-mix(in srgb,var(--c-b) 25%,var(--surface)),var(--surface));border:1px solid var(--line-2)}
+.steps5{display:flex;justify-content:space-between;margin:14px 0 16px;gap:4px}
+.steps5 div{flex:1;text-align:center;font-size:12px;color:var(--ink-2)}
+.steps5 i{display:grid;place-items:center;width:34px;height:34px;margin:0 auto 6px;border-radius:50%;font-style:normal;font-weight:900;font-size:13px;color:#141218;background:linear-gradient(135deg,var(--c-a),var(--c-b));opacity:0;transform:scale(.4)}
+.course{margin-top:16px;padding:18px;border-radius:20px;background:var(--surface);border:1px solid var(--line)}
+.course .cname{font-size:17px;font-weight:900;line-height:1.5;margin:0 0 8px}
+.blueprint{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+.blueprint div{border-radius:12px;padding:10px 8px;font-size:12px;line-height:1.5;min-height:62px;border:1px solid var(--line-2);color:var(--ink-2);opacity:0;transform:translateY(6px);transition:opacity .4s,transform .4s}
+.blueprint div.on{opacity:1;transform:none}
+.blueprint div.filled{background:color-mix(in srgb,var(--c-a) 16%,var(--surface));border-color:color-mix(in srgb,var(--c-a) 50%,transparent);color:var(--ink)}
+.blueprint div.blank{border-style:dashed;animation:dashblink 2s ease-in-out infinite}
+@keyframes dashblink{50%{border-color:rgba(255,255,255,.35)}}
+.blueprint small{display:block;color:var(--ink-3);font-size:11px}
+.stars{display:flex;gap:6px;justify-content:center;margin:12px 0}
+.stars button{background:none;border:0;font-size:34px;line-height:1;color:var(--line-2);transition:transform .15s,color .2s;padding:2px}
+.stars button.on{color:#FFD84D;text-shadow:0 0 14px rgba(255,216,77,.6)}
+.stars button:active{transform:scale(.85)}
+.dex{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.dex div{border-radius:12px;padding:10px 4px;text-align:center;font-size:11px;color:var(--ink-3);background:var(--surface);border:1px solid var(--line)}
+.dex div i{display:block;width:28px;height:28px;margin:0 auto 4px;border-radius:50%;background:#2E2A37}
+.dex div.me{color:var(--ink);border-color:color-mix(in srgb,var(--c-a) 60%,transparent);box-shadow:0 0 16px color-mix(in srgb,var(--c-a) 30%,transparent)}
+.dex div.me i{background:linear-gradient(135deg,var(--c-a),var(--c-b))}
+.team{border-radius:20px;padding:18px;background:var(--surface);border:1px solid var(--line-2)}
+.team .score{font-size:40px;font-weight:900;background:linear-gradient(90deg,var(--c-a),var(--c-b));-webkit-background-clip:text;background-clip:text;color:transparent}
+.form{display:grid;gap:14px}
+.form label{font-size:14px;color:var(--ink-2);display:grid;gap:6px}
+.form label small{color:var(--ink-3)}
+.check{display:flex!important;grid-template-columns:none;gap:10px;align-items:flex-start;font-size:14px;line-height:1.6}
+.check input{width:20px;height:20px;margin-top:2px;flex:none;accent-color:var(--c-a)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line-2);background:var(--surface);border-radius:999px;padding:9px 14px;font-size:14px;color:var(--ink-2)}
+.chip[aria-pressed="true"]{color:#141218;background:var(--ink);border-color:var(--ink)}
+.err{color:#FF8FA8;font-size:13px;min-height:18px}
+.note{font-size:12px;color:var(--ink-3);text-align:center;line-height:1.7;margin:18px 0 0}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(16px);background:var(--ink);color:#141218;padding:12px 16px;border-radius:14px;font-size:14px;line-height:1.5;max-width:min(92vw,380px);box-shadow:0 10px 30px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:20;text-align:center}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.modal{position:fixed;inset:0;z-index:30;background:rgba(10,8,14,.7);display:grid;place-items:center;padding:20px}
+.modal .box{max-width:400px;background:var(--surface);border:1px solid var(--line-2);border-radius:20px;padding:22px;font-size:15px;line-height:1.7;color:var(--ink-2)}
+.fadein{animation:fadein .45s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* v2 additions */
+.qprog{height:4px;border-radius:4px;background:var(--line-2);overflow:hidden;margin:0 0 12px}
+.qprog span{display:block;height:100%;background:linear-gradient(90deg,var(--c-a),var(--c-b));transition:width .3s}
+.stickybar{position:sticky;bottom:0;z-index:5;margin:16px -20px 0;padding:12px 20px calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(0deg,var(--bg) 70%,transparent)}
+.peek{margin:-2px 0 0;font-size:15px;line-height:1.7;color:var(--ink-3);text-align:center;-webkit-mask-image:linear-gradient(180deg,#000 30%,transparent);mask-image:linear-gradient(180deg,#000 30%,transparent)}
+.disc{font-size:12px;color:var(--ink-3);text-align:center;margin:14px 0 0;line-height:1.6}
+.lbl{display:block;font-size:13px;color:var(--c-a);margin-bottom:2px;letter-spacing:.04em}
+.paper .lbl{color:#9A6BD8}
+.help{background:var(--surface);border:1px solid var(--line-2);border-radius:16px;padding:14px 16px;font-size:15px;line-height:1.7}
+.help ul{margin:0;padding-left:20px}
+.notfor{margin:10px 0;font-size:14px;color:var(--ink-2)}
+.notfor summary{cursor:pointer;color:var(--ink-2);font-weight:700}
+.notfor ul{margin:8px 0 0;padding-left:20px;line-height:1.7}
+.ep1{margin:6px 0 12px;padding-left:22px;line-height:2;font-size:16px}
+.gift ul{margin:0 0 14px}
+.light{margin:14px 0 0;padding:14px 16px;border-radius:16px;background:color-mix(in srgb,var(--c-a) 12%,var(--surface));border:1px solid color-mix(in srgb,var(--c-a) 35%,transparent);font-size:16px;line-height:1.8}
+.paper .light{background:#F3ECFF;border-color:#D9C7FF}
+/* v1.1 additions */
+.more{display:flex;flex-direction:column;align-items:center;gap:4px;width:100%;margin:2px 0 0;padding:14px;border:0;background:none;color:var(--ink);font-size:17px;font-weight:700}
+.more span{font-size:13px;font-weight:500;color:var(--ink-3);animation:nudge 1.6s ease-in-out infinite}
+@keyframes nudge{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+.ctop{position:sticky;top:0;z-index:4;margin:0 -20px 8px;padding:8px 20px 6px;background:linear-gradient(180deg,var(--bg) 82%,transparent);}
+.stage.small .toy{width:130px;height:130px;margin:0}
+.stage.small .halo{bottom:6px;width:160px;height:80px}
+.ctop .tag{margin:2px 0 0}
+.ctop .tag .n{font-size:20px;min-height:28px}
+.cblock{margin:22px 0 0}
+.cblock h2{margin-bottom:8px}
+.qtop{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.qtop .qcount{margin:0}
+.backq{text-decoration:none;font-size:13px}
+.done-hero{text-align:center;padding-top:8px}
+.stamp{display:inline-block;margin-top:10px;font-size:34px;font-weight:900;letter-spacing:.08em;padding:8px 22px;border:3px solid var(--c-a);color:var(--c-a);border-radius:14px;transform:rotate(-6deg);text-shadow:0 0 18px color-mix(in srgb,var(--c-a) 60%,transparent);box-shadow:0 0 24px color-mix(in srgb,var(--c-a) 30%,transparent) inset}
+.title-g{font-size:16px;font-weight:700;margin:0;background:linear-gradient(90deg,var(--c-a),var(--c-b));-webkit-background-clip:text;background-clip:text;color:transparent}
+.gift{position:relative;border-radius:22px;padding:22px 18px 18px;background:#F6F2EA;color:#231C2B;box-shadow:0 18px 40px rgba(0,0,0,.4)}
+.gift h3{font-size:22px;font-weight:900;margin:6px 0 8px;color:#231C2B}
+.gift p{font-size:15px;line-height:1.75;color:#4A4252;margin:0 0 10px}
+.gift ul{margin:0 0 16px;padding-left:20px;color:#4A4252;font-size:14px;line-height:1.9}
+.gift .btn{background:#231C2B;color:#fff}
+.gift-tag{display:inline-block;font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px;background:linear-gradient(90deg,var(--c-a),var(--c-b));color:#141218}
+.conf{position:fixed;width:8px;height:12px;border-radius:2px;z-index:25;pointer-events:none}
+.paper{--ink:#231C2B;--ink-2:#4A4252;--ink-3:#7B7383;--surface:#FFFFFF;--surface-2:#F3EEE5;--line:rgba(35,28,43,.1);--line-2:rgba(35,28,43,.2);--bg-2:#EAE4D8;
+  background:#F6F2EA;color:var(--ink);border-radius:24px;padding:22px 18px 26px;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+.paper .section h4{color:#9A6BD8}
+.paper .btn{background:#231C2B;color:#fff}
+.paper .egg{background:linear-gradient(160deg,#EFE6FF,#FFFFFF)}
+.paper .sh{color:var(--ink)}
+.cover{text-align:center;padding-bottom:18px;border-bottom:1px dashed var(--line-2)}
+.cover-top{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-3)}
+.cover-top b{color:var(--ink)}
+.cover-toy{width:150px;height:150px;margin:6px auto 0}
+.cover-toy svg{width:100%;height:100%}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .fx{display:none}
+  .lake p span,.blueprint div,.steps5 i{opacity:1!important;transform:none!important;filter:none!important}
+}
+</style>
+</head>
+<body>
+<div class="fx" id="fx" aria-hidden="true"></div>
+<main class="app">
+  <div class="brandbar"><b>夢遊扭蛋島</b><span>Design Thinking POW WOW</span></div>
+  <div id="view"></div>
+</main>
+<div class="toast" id="toast" role="status"></div>
+<script>
+/* ============ DATA ============ */
+const COLORS = [
+  {id:'pinkviolet', name:'電光粉紫', a:'#FF5FD2', b:'#8B5CFF'},
+  {id:'orangepeach',name:'螢光橘桃', a:'#FF9A3D', b:'#FF4F9A'},
+  {id:'mint',       name:'薄荷青藍', a:'#3DF5D0', b:'#3D8BFF'},
+  {id:'lime',       name:'檸檬萊姆', a:'#E8FF4D', b:'#2FE07E'},
+  {id:'sakura',     name:'櫻花薰衣草', a:'#FFB3E6', b:'#A98BFF'},
+  {id:'ocean',      name:'深海霓虹', a:'#19E3FF', b:'#4B3BFF'},
+  {id:'coral',      name:'火焰珊瑚', a:'#FFC23D', b:'#FF3D6E'},
+  {id:'rainbow',    name:'彩虹全彩', a:'#FF5FD2', b:'#3DF5D0', rainbow:true},
+];
+const ANIMALS = [
+  {id:'frenchie',label:'法鬥'},{id:'shiba',label:'柴犬'},{id:'cat',label:'橘貓'},
+  {id:'capy',label:'水豚'},{id:'bunny',label:'兔子'},{id:'hamster',label:'倉鼠'},
+  {id:'penguin',label:'企鵝'},{id:'other',label:'其他'}
+];
+const FRUITS = [
+  {id:'tomato',label:'番茄'},{id:'strawberry',label:'草莓'},{id:'avocado',label:'酪梨'},
+  {id:'lemon',label:'檸檬'},{id:'grape',label:'葡萄'},{id:'peach',label:'水蜜桃'},
+  {id:'watermelon',label:'西瓜'},{id:'other',label:'其他'}
+];
+let uidN = 0;
+const INK = '#221A2E';
+
+/* ============ COLOR UTIL ============ */
+function hx(h){h=h.replace('#','');if(h.length===3)h=h.split('').map(c=>c+c).join('');return [0,2,4].map(i=>parseInt(h.substr(i,2),16));}
+function mix(a,b,t){const A=hx(a),B=hx(b);return '#'+A.map((v,i)=>Math.round(v+(B[i]-v)*t).toString(16).padStart(2,'0')).join('');}
+
+/* ============ CHARACTER ============ */
+const BODY = 'M100 56 C147 56 171 90 171 130 C171 168 141 184 100 184 C59 184 29 168 29 130 C29 90 53 56 100 56Z';
+const BASE = {frenchie:'#E9C49B',shiba:'#F0A04E',cat:'#FFB25C',capy:'#BC8E63',bunny:'#F6F1FB',hamster:'#F5C57A',penguin:'#3C4A8E'};
+
+function eyes(kind){
+  if(kind==='sleepy') return `<path d="M68 119 Q77 125 86 119" stroke="${INK}" stroke-width="3.4" fill="none" stroke-linecap="round"/><path d="M114 119 Q123 125 132 119" stroke="${INK}" stroke-width="3.4" fill="none" stroke-linecap="round"/>`;
+  const e=x=>`<path d="M${x-7.5} 115.5 A7.5 8.5 0 0 0 ${x+7.5} 115.5 Z" fill="${INK}"/>
+    <path d="M${x-9.5} 115 L${x+9.5} 115" stroke="${INK}" stroke-width="2.6" stroke-linecap="round"/>
+    <circle cx="${x+2.6}" cy="118.6" r="1.9" fill="#fff"/>`;
+  return e(77)+e(123);
+}
+const MOUTH = `<path d="M94.5 134 Q100 138.5 105.5 134" stroke="${INK}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
+const mirror = s=>`<g transform="translate(200 0) scale(-1 1)">${s}</g>`;
+
+function parts(id, F, base, shade, uid){
+  const clip = `clip-path="url(#bc${uid})"`;
+  switch(id){
+    case 'frenchie': { const ear=`<path d="M46 92 C30 60 36 26 56 22 C76 26 86 58 86 76 Z" fill="${F}"/><path d="M53 82 C43 58 47 36 57 33 C70 37 77 58 77 72 Z" fill="#E99A96"/>`;
+      return {behind:ear+mirror(ear), marks:`<g ${clip}><ellipse cx="100" cy="134" rx="30" ry="21" fill="${mix(base,'#fff',.55)}"/></g>
+        <path d="M89 96 Q100 91.5 111 96" stroke="${shade}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`,
+        nose:`<ellipse cx="100" cy="126" rx="8.5" ry="5.6" fill="${INK}"/><ellipse cx="97" cy="124.2" rx="2.4" ry="1.3" fill="#fff" opacity=".7"/>`}; }
+    case 'shiba': { const ear=`<path d="M50 90 L58 40 L92 68 Z" fill="${F}" stroke="${base}" stroke-width="10" stroke-linejoin="round"/><path d="M60 78 L63 54 L81 67 Z" fill="#FFE6C8" stroke="#FFE6C8" stroke-width="4" stroke-linejoin="round"/>`;
+      return {behind:ear+mirror(ear), marks:`<g ${clip}><ellipse cx="100" cy="152" rx="60" ry="34" fill="#FFF3E2"/><ellipse cx="60" cy="128" rx="19" ry="14" fill="#FFF3E2"/><ellipse cx="140" cy="128" rx="19" ry="14" fill="#FFF3E2"/></g>
+        <ellipse cx="78" cy="101" rx="5" ry="3.2" fill="#FFF3E2"/><ellipse cx="122" cy="101" rx="5" ry="3.2" fill="#FFF3E2"/>`,
+        nose:`<ellipse cx="100" cy="127" rx="6.5" ry="4.5" fill="${INK}"/>`}; }
+    case 'cat': { const ear=`<path d="M48 92 L54 42 L90 70 Z" fill="${F}" stroke="${base}" stroke-width="10" stroke-linejoin="round"/><path d="M58 80 L61 56 L79 69 Z" fill="#FF9DB8" stroke="#FF9DB8" stroke-width="4" stroke-linejoin="round"/>`;
+      const wh=`<path d="M57 131 L39 127 M57 137 L41 139" stroke="${shade}" stroke-width="2" stroke-linecap="round" opacity=".8"/>`;
+      return {behind:ear+mirror(ear), marks:`<g ${clip}><path d="M100 58 L100 78 M88 61 L90 76 M112 61 L110 76" stroke="${shade}" stroke-width="5.5" stroke-linecap="round"/>
+        <path d="M28 112 L44 114 M28 124 L42 125 M172 112 L156 114 M172 124 L158 125" stroke="${shade}" stroke-width="5" stroke-linecap="round"/></g>`+wh+mirror(wh),
+        nose:`<path d="M95.5 125 L104.5 125 L100 130 Z" fill="#FF7FA3" stroke="#FF7FA3" stroke-width="2" stroke-linejoin="round"/>`}; }
+    case 'capy': { const ear=`<ellipse cx="62" cy="70" rx="11" ry="9" fill="${shade}"/><ellipse cx="62" cy="71" rx="6" ry="4.5" fill="${mix(shade,'#000',.3)}"/>`;
+      return {behind:ear+mirror(ear), eyes:'sleepy', mouth:'',
+        marks:`<ellipse cx="100" cy="137" rx="31" ry="22" fill="${mix(base,'#000',.12)}"/><path d="M95 149 Q100 152.5 105 149" stroke="${INK}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`,
+        nose:`<ellipse cx="92" cy="131" rx="3" ry="4" fill="#4A3221"/><ellipse cx="108" cy="131" rx="3" ry="4" fill="#4A3221"/>`}; }
+    case 'bunny': { const ear=`<ellipse cx="76" cy="46" rx="14" ry="38" fill="${F}" transform="rotate(-10 76 46)"/><ellipse cx="76" cy="48" rx="6.5" ry="27" fill="#FFB6D0" transform="rotate(-10 76 48)"/>`;
+      return {behind:ear+mirror(ear), marks:'', nose:`<path d="M96 125.5 Q100 123 104 125.5 Q102 129 100 129.5 Q98 129 96 125.5Z" fill="#FF8FB1"/>`}; }
+    case 'hamster': { const ear=`<circle cx="62" cy="70" r="13" fill="${F}"/><circle cx="62" cy="71" r="7.5" fill="#FFB6C4"/>`;
+      return {behind:ear+mirror(ear), cheekRx:13, cheekRy:8, marks:`<g ${clip}><ellipse cx="100" cy="158" rx="50" ry="34" fill="#FFF6E8"/></g>`,
+        nose:`<ellipse cx="100" cy="126" rx="4" ry="3" fill="#FF8FB1"/>`}; }
+    case 'penguin': { const wing=`<ellipse cx="34" cy="138" rx="10" ry="22" fill="${F}" transform="rotate(18 34 138)"/>`;
+      return {behind:wing+mirror(wing), feetColor:'#FFB23D', marks:`<g ${clip}><path d="M100 84 C132 84 150 108 150 138 C150 168 128 184 100 184 C72 184 50 168 50 138 C50 108 68 84 100 84Z" fill="#FBFAFF"/></g>`,
+        nose:`<path d="M93 125 L107 125 L100 133 Z" fill="#FFB23D" stroke="#FFB23D" stroke-width="3" stroke-linejoin="round"/>`}; }
+  }
+}
+
+function fruitHat(id, uid){
+  switch(id){
+    case 'tomato': return `<ellipse cx="0" cy="-12" rx="29" ry="23" fill="url(#fs${uid})"/><ellipse cx="-11" cy="-22" rx="8" ry="4.2" fill="#fff" opacity=".7" transform="rotate(-18 -11 -22)"/>
+      <path d="M0 -36 L5 -29 L15 -31 L9 -24 L13 -17 L0 -22 L-13 -17 L-9 -24 L-15 -31 L-5 -29 Z" fill="#35BE65" stroke="#35BE65" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M0 -35 L1.5 -44" stroke="#279A4F" stroke-width="3.4" stroke-linecap="round"/>`;
+    case 'strawberry': return `<path d="M-27 -26 C-28 -6 -11 12 0 14 C11 12 28 -6 27 -26 C26 -36 -26 -36 -27 -26Z" fill="url(#fs${uid})"/>
+      <ellipse cx="-12" cy="-20" rx="6" ry="3.5" fill="#fff" opacity=".55"/>
+      ${[[-14,-12],[0,-16],[14,-12],[-8,-2],[8,-2],[0,7],[-18,-22],[18,-22]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="1.8" ry="2.6" fill="#FFE27A"/>`).join('')}
+      <path d="M-22 -30 L-12 -40 L-6 -32 L0 -44 L6 -32 L12 -40 L22 -30 Q0 -24 -22 -30Z" fill="#35BE65" stroke="#35BE65" stroke-width="2" stroke-linejoin="round"/>`;
+    case 'avocado': return `<path d="M0 -46 C15 -46 19 -31 23 -17 C29 4 17 14 0 14 C-17 14 -29 4 -23 -17 C-19 -31 -15 -46 0 -46Z" fill="#3B8A38"/>
+      <path d="M0 -40 C12 -40 15 -28 18 -16 C23 1 13 8 0 8 C-13 8 -23 1 -18 -16 C-15 -28 -12 -40 0 -40Z" fill="#DDF29A"/>
+      <circle cx="0" cy="-6" r="11" fill="url(#fs${uid})"/><ellipse cx="-4" cy="-10" rx="3.5" ry="2.2" fill="#fff" opacity=".55"/>`;
+    case 'lemon': return `<g transform="rotate(-14)"><ellipse cx="0" cy="-12" rx="30" ry="20" fill="url(#fs${uid})"/>
+      <ellipse cx="-31" cy="-12" rx="5" ry="4" fill="#FFD93D"/><ellipse cx="31" cy="-12" rx="5" ry="4" fill="#F2C42A"/>
+      <ellipse cx="-10" cy="-21" rx="9" ry="3.8" fill="#fff" opacity=".7"/></g>
+      <path d="M6 -33 C14 -46 28 -44 30 -38 C22 -32 12 -31 6 -33Z" fill="#35BE65"/>`;
+    case 'grape': { const pts=[[-15,-24],[0,-26],[15,-24],[-8,-11],[8,-11],[0,2]];
+      return `<path d="M0 -34 L2 -44" stroke="#7A5232" stroke-width="3.4" stroke-linecap="round"/><path d="M2 -40 C10 -50 24 -48 26 -42 C18 -36 8 -36 2 -40Z" fill="#35BE65"/>
+      ${pts.map(([x,y])=>`<circle cx="${x}" cy="${y}" r="10" fill="url(#fs${uid})"/><circle cx="${x-3}" cy="${y-3.5}" r="2.6" fill="#fff" opacity=".7"/>`).join('')}`; }
+    case 'peach': return `<path d="M0 -34 C-14 -42 -30 -30 -29 -12 C-28 6 -14 13 0 13 C14 13 28 6 29 -12 C30 -30 14 -42 0 -34Z" fill="url(#fs${uid})"/>
+      <path d="M0 -33 Q-7 -14 -1 10" stroke="#E8668E" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".55"/>
+      <ellipse cx="-14" cy="-20" rx="6" ry="4" fill="#fff" opacity=".55"/><path d="M1 -35 C8 -48 22 -46 24 -40 C16 -34 7 -33 1 -35Z" fill="#35BE65"/>`;
+    case 'watermelon': return `<g transform="translate(0 -14) rotate(180 0 -10)"><path d="M-32 -10 A32 32 0 0 0 32 -10 Z" fill="#2FBF5B"/>
+      <path d="M-27 -10 A27 27 0 0 0 27 -10 Z" fill="#FFF6D6"/><path d="M-24 -10 A24 24 0 0 0 24 -10 Z" fill="url(#fs${uid})"/></g>
+      ${[[-12,-20],[0,-27],[12,-20],[-5,-14],[6,-14]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="1.8" ry="2.8" fill="${INK}"/>`).join('')}`;
+    case 'other': return `<circle cx="0" cy="-14" r="24" fill="url(#fs${uid})"/><circle cx="0" cy="-14" r="24" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="1.5"/>
+      <text x="0" y="-5" text-anchor="middle" font-size="26" font-weight="900" fill="${INK}" font-family="Noto Sans TC, sans-serif">?</text>`;
+  }
+  return '';
+}
+const FRUIT_TONE = {tomato:'#FF4A4A',strawberry:'#FF4F7B',avocado:'#A0602F',lemon:'#FFE14D',grape:'#9257F5',peach:'#FF9DAE',watermelon:'#FF4F6A',other:'#FFF1A8'};
+function fruitDefs(id, uid){
+  const c = FRUIT_TONE[id]||'#fff';
+  return `<radialGradient id="fs${uid}" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="${mix(c,'#fff',.45)}"/><stop offset=".55" stop-color="${c}"/><stop offset="1" stop-color="${mix(c,'#000',.25)}"/></radialGradient>`;
+}
+
+function toySVG(st, opts={}){
+  const uid = ++uidN;
+  const col = COLORS.find(c=>c.id===st.color)||COLORS[0];
+  const myst = st.animal==='other', empty = !st.animal;
+  let base = myst ? mix(col.a,'#fff',.55) : empty ? '#3A3545' : BASE[st.animal];
+  const shade = mix(base,'#000',.22);
+  let defs = `<clipPath id="bc${uid}"><path d="${BODY}"/></clipPath>
+    <radialGradient id="bg${uid}" cx=".34" cy=".26" r=".85"><stop offset="0" stop-color="${mix(base,'#fff',.5)}"/><stop offset=".5" stop-color="${base}"/><stop offset="1" stop-color="${shade}"/></radialGradient>
+    <linearGradient id="rim${uid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${col.a}"/><stop offset="1" stop-color="${col.b}"/></linearGradient>`;
+  const F = `url(#bg${uid})`;
+  let p = {behind:'',marks:'',nose:''};
+  if(empty){ p.marks = `<text x="100" y="140" text-anchor="middle" font-size="40" font-weight="900" fill="rgba(255,255,255,.35)" font-family="Noto Sans TC, sans-serif">?</text>`; }
+  else if(myst){ p.marks=`<path d="M152 74 l3.5 8 8 3.5 -8 3.5 -3.5 8 -3.5 -8 -8 -3.5 8 -3.5z" fill="#fff"/>`; p.nose=`<ellipse cx="100" cy="126" rx="4" ry="3" fill="${INK}"/>`; }
+  else p = parts(st.animal, F, base, shade, uid);
+  const ey = empty ? '' : eyes(p.eyes);
+  const mo = empty ? '' : (p.mouth!==undefined ? p.mouth : MOUTH);
+  const ck = empty ? '' : `<ellipse cx="60" cy="134" rx="${p.cheekRx||10}" ry="${p.cheekRy||5.5}" fill="#FF7FA6" opacity=".38"/><ellipse cx="140" cy="134" rx="${p.cheekRx||10}" ry="${p.cheekRy||5.5}" fill="#FF7FA6" opacity=".38"/>`;
+  const fc = p.feetColor || shade;
+  const ft = `<ellipse cx="72" cy="182" rx="17" ry="8.5" fill="${fc}"/><ellipse cx="128" cy="182" rx="17" ry="8.5" fill="${fc}"/>`;
+  let hat = '';
+  if(!opts.noHat && st.fruit){ defs += fruitDefs(st.fruit, uid); hat = `<g transform="translate(100 54)"><g class="hat">${fruitHat(st.fruit, uid)}</g></g>`; }
+  return `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${dispName(st)||'守護獸'}">
+    <defs>${defs}</defs>
+    ${p.behind}${ft}
+    <path d="${BODY}" fill="${F}"/>
+    ${p.marks}
+    <path d="${BODY}" fill="none" stroke="url(#rim${uid})" stroke-width="2.4" opacity="${empty?0:.75}"/>
+    <ellipse cx="66" cy="82" rx="15" ry="7" fill="#fff" opacity=".75" transform="rotate(-30 66 82)"/>
+    <circle cx="84" cy="70" r="3" fill="#fff" opacity=".8"/>
+    ${ck}${ey}${p.nose}${mo}${hat}
+  </svg>`;
+}
+
+function pedestal(){
+  const u=++uidN;
+  return `<defs><linearGradient id="pside${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2E2A37"/><stop offset="1" stop-color="#18161D"/></linearGradient>
+    <linearGradient id="prim${u}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="var(--c-a)"/><stop offset="1" stop-color="var(--c-b)"/></linearGradient>
+    <radialGradient id="ptop${u}" cx=".5" cy=".4"><stop offset="0" stop-color="#3A3545"/><stop offset="1" stop-color="#25222D"/></radialGradient></defs>
+    <path d="M20 22 L20 48 A95 18 0 0 0 210 48 L210 22 Z" fill="url(#pside${u})"/>
+    <ellipse cx="115" cy="22" rx="95" ry="18" fill="url(#ptop${u})"/>
+    <ellipse cx="115" cy="22" rx="95" ry="18" fill="none" stroke="url(#prim${u})" stroke-width="1.6" opacity=".9"/>
+    <ellipse cx="115" cy="24" rx="58" ry="9" fill="#000" opacity=".35"/>`;
+}
+function guideSvg(){
+  const g='gg'+(++uidN);
+  return `<defs><linearGradient id="${g}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--c-a)"/><stop offset="1" stop-color="var(--c-b)"/></linearGradient></defs>
+    <path d="M6 34 A24 24 0 0 1 54 34 Z" fill="#fff" opacity=".9"/><path d="M6 34 L54 34 A24 26 0 0 1 6 34Z" fill="url(#${g})"/>
+    <rect x="5" y="32" width="50" height="4.5" rx="2.2" fill="#fff"/><ellipse cx="20" cy="20" rx="7" ry="3.5" fill="#fff" transform="rotate(-30 20 20)"/>
+    <path d="M18.5 45 L27.5 45 M32.5 45 L41.5 45" stroke="${INK}" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M26 52 Q30 55 34 52" stroke="${INK}" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+}
+
+function machineSVG(){
+  const caps=[[74,96,'#FF5FD2'],[116,76,'#3DF5D0'],[158,98,'#E8FF4D'],[94,132,'#8B5CFF'],[140,134,'#FF9A3D'],[118,110,'#FFB3E6'],[66,140,'#19E3FF'],[168,142,'#FF3D6E'],[120,168,'#FF5FD2'],[84,172,'#3D8BFF'],[158,174,'#2FE07E']];
+  return `<defs>
+    <linearGradient id="mrim" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--c-a)"/><stop offset="1" stop-color="var(--c-b)"/></linearGradient>
+    <linearGradient id="mbody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2F2B38"/><stop offset="1" stop-color="#1A1820"/></linearGradient>
+    <radialGradient id="mdome" cx=".35" cy=".3"><stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset="1" stop-color="#fff" stop-opacity=".04"/></radialGradient>
+    <radialGradient id="cg" cx=".35" cy=".3"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <clipPath id="dclip"><circle cx="120" cy="112" r="84"/></clipPath></defs>
+    <ellipse cx="120" cy="330" rx="92" ry="7" fill="#000" opacity=".45"/>
+    <g id="mDome">
+      <g clip-path="url(#dclip)" id="mCaps">${caps.map(([x,y,c])=>`<g transform="translate(${x} ${y})"><circle r="18" fill="${c}"/><path d="M-18 0 A18 18 0 0 1 18 0Z" fill="#fff" opacity=".8"/><circle r="18" fill="url(#cg)" opacity=".5"/></g>`).join('')}</g>
+      <circle cx="120" cy="112" r="84" fill="url(#mdome)" stroke="#fff" stroke-opacity=".35" stroke-width="2"/>
+      <path d="M66 76 A68 68 0 0 1 106 46" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".55"/>
+    </g>
+    <rect x="30" y="186" width="180" height="136" rx="22" fill="url(#mbody)"/>
+    <rect x="30" y="186" width="180" height="136" rx="22" fill="none" stroke="url(#mrim)" stroke-width="1.6"/>
+    <rect x="40" y="198" width="160" height="1" fill="#fff" opacity=".12"/>
+    <text x="48" y="226" font-size="14" fill="#BDB7C9" font-family="Noto Sans TC, sans-serif" font-weight="700">夢遊扭蛋</text>
+    <text x="192" y="226" font-size="11" fill="#8C8699" text-anchor="end" font-family="Noto Sans TC, sans-serif">NT$ 夢想 1 枚</text>
+    <g id="mKnob" transform="translate(84 276)"><circle r="25" fill="#ECE9F2"/><circle r="25" fill="none" stroke="url(#mrim)" stroke-width="2"/><rect x="-18" y="-4.5" width="36" height="9" rx="4.5" fill="#2A2633"/></g>
+    <rect x="132" y="256" width="60" height="40" rx="12" fill="#0E0C12"/><rect x="132" y="256" width="60" height="40" rx="12" fill="none" stroke="#fff" stroke-opacity=".12"/>`;
+}
+function capsuleSVG(){
+  return `<defs><linearGradient id="capB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--c-a)"/><stop offset="1" stop-color="var(--c-b)"/></linearGradient>
+    <radialGradient id="capS" cx=".3" cy=".25"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset="1" stop-color="#fff" stop-opacity=".55"/></radialGradient></defs>
+    <g id="capBot"><path d="M15 75 A60 60 0 0 0 135 75 Z" fill="url(#capB)"/><ellipse cx="52" cy="100" rx="13" ry="6" fill="#fff" opacity=".35"/></g>
+    <g id="capTop"><path d="M15 75 A60 60 0 0 1 135 75 Z" fill="url(#capS)"/><path d="M40 46 A40 40 0 0 1 70 28" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round"/><rect x="12" y="71" width="126" height="7" rx="3.5" fill="#fff"/></g>`;
+}
+/* ===================== CONTENT ===================== */
+const COURSE_NAME = '《別急著找答案，用設計思考，打造你自己的人生藍圖》';
+const COURSE_URL = '#'; // TODO: PressPlay 審核通過後，填入課程報名頁網址
+const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwJ_2eDRfawGsz3twtwpWlyaqQlvry6iNZ2KBlvoJUpfZCrkMHkAdaCi37uKUJvHvk/exec'; // Apps Script（dreamisland.chacha@gmail.com 部署）
+const CONTACT = 'dreamisland.chacha@gmail.com';
+// 〔草稿・待查查確認；細節需律師確認〕個資告知事項
+const PRIVACY_NOTE = `<h3 style="margin:0 0 10px;color:var(--ink);font-size:18px">個資告知事項與隱私權說明</h3>
+<p style="margin:0 0 8px"><b>誰在蒐集：</b>查查創意（Design Thinking POW WOW）。</p>
+<p style="margin:0 0 8px"><b>蒐集什麼：</b>一、遊戲作答（每一題的選擇），以匿名方式記錄，不和 Email 存在一起。二、你領取完整報告書時填寫的 Email，以及選填的年齡、產業；這些會和你的稱號、最近最卡的事、目前階段存在一起。</p>
+<p style="margin:0 0 8px"><b>用來做什麼：</b>一、寄送你的完整報告書。二、只有你勾選「願意收到課程與活動資訊」時，才會依你的稱號與狀態寄送相關內容與電子報。三、只有你勾選「同意作答用於研究統計」時，才會把去識別化的整體統計用於研究或公開分享，不會出現任何可以認出你的資訊。匿名作答也會用於改善遊戲。</p>
+<p style="margin:0 0 8px"><b>存放在哪裡：</b>Google（試算表與寄信）與 Substack（電子報）的雲端服務，伺服器可能位於台灣以外的地區。這兩家是我們委託的處理者，除此之外不會出售或提供給第三方。</p>
+<p style="margin:0 0 8px"><b>保存多久：</b>有勾選收資訊者，保存到你取消訂閱或要求刪除後 30 天內刪除；沒有勾選者，寄出報告後 12 個月內刪除。匿名作答保存 3 年。</p>
+<p style="margin:0 0 8px"><b>你的權利：</b>你可以隨時要求查詢、閱覽、複製、更正、停止使用或刪除你的資料，或取消接收資訊，請來信 ${CONTACT}。每封資訊信也都可以直接取消訂閱。</p>
+<p style="margin:0 0 8px"><b>未滿 18 歲：</b>本遊戲僅供 18 歲以上使用；若發現未成年者的資料，會直接刪除。</p>
+<p style="margin:0"><b>不提供會怎樣：</b>Email 是寄送完整報告書所必需；不填寫仍可玩完遊戲並看到結果。</p>`;
+
+const Q1 = {
+  id:'q1', prompt:'你現在在哪個階段？',
+  options:[
+    {id:'student', label:'大學或研究所在學', route:'student'},
+    {id:'y3', label:'出社會 3 年內', route:'worker'},
+    {id:'y10', label:'工作 3 到 10 年', route:'worker'},
+    {id:'y10p', label:'工作 10 年以上', route:'worker'},
+    {id:'free', label:'自由工作或創業', route:'founder'},
+    {id:'none', label:'目前沒有工作（待業、照顧家庭、休息中）', route:'trans'},
+  ]
+};
+
+const PAINS = {
+  noFeel:{label:'工作內容沒什麼感覺', stuck:'direction'},
+  income:{label:'收入不夠或不穩定', stuck:'value'},
+  people:{label:'同事或主管讓我很累', stuck:'people'},
+  peopleS:{label:'同學或老師讓我很累', stuck:'people'},
+  study:{label:'學的東西不知道以後用不用得到', stuck:'future'},
+  studyS:{label:'不知道現在學的以後用不用得到', stuck:'future'},
+  grad:{label:'不知道畢業後能不能養活自己', stuck:'future'},
+  compare:{label:'看別人過得比我好', stuck:'compare'},
+  family:{label:'家人的期待讓我有壓力', stuck:'family'},
+  time:{label:'忙到沒有自己的時間', stuck:'time'},
+  vague:{label:'說不出來，就是悶', stuck:'direction'},
+  back:{label:'不知道還回不回得去', stuck:'restart'},
+  gap:{label:'空白期讓我沒自信', stuck:'restart'},
+  path:{label:'不確定要回原本的路，還是換一條', stuck:'restart'},
+  alone:{label:'一個人做，沒有方向', stuck:'restart'},
+  persist:{label:'不確定該堅持，還是該轉向', stuck:'direction'},
+  ok:{label:'其實還好，只是想多了解自己', stuck:'explore'},
+};
+const Q2_BY_ROUTE = {
+  worker:['noFeel','income','people','study','compare','family','time','vague','ok'],
+  student:['studyS','grad','peopleS','compare','family','time','vague','ok'],
+  trans:['income','back','gap','path','compare','family','vague','ok'],
+  founder:['income','alone','persist','time','compare','family','vague','ok'],
+};
+
+// 四維度題目：d = 維度 (0 渴望 A/M, 1 變化 S/E, 2 決策 L/I, 3 節奏 P/D)；w = 強弱，兩題不同邊時比強弱
+const DIMQ = {
+  q4:{d:0, prompt:'放假的最後一個晚上，你心裡最常出現的聲音是？', options:[
+    {label:'「要是能多賺一點就好了」', v:'A', w:1},{label:'「這樣下去，我會變成什麼樣的人？」', v:'M', w:2},
+    {label:'「好想快點被看見、被肯定」', v:'A', w:2},{label:'「我想做點有意義的事」', v:'M', w:1}]},
+  q5:{d:1, prompt:'朋友約你一起做一件新的事（副業、轉行、出國），你的第一反應是？', options:[
+    {label:'先確認會不會影響現在的生活', v:'S', w:1},{label:'先觀望，看別人做得怎樣', v:'S', w:2},
+    {label:'聽起來很好玩，先試試看', v:'E', w:2},{label:'心動，開始想要怎麼排出時間', v:'E', w:1}]},
+  q6:{d:2, prompt:'要做重要決定時，你通常怎麼做？', options:[
+    {label:'列優缺點、查資料', v:'L', w:1},{label:'比較各種數字和條件', v:'L', w:2},
+    {label:'跟著心裡的感覺走', v:'I', w:2},{label:'想像做了之後的自己開不開心', v:'I', w:1}]},
+  q7:{d:3, prompt:'上一次你說「我想改變」，後來怎麼了？', options:[
+    {label:'研究了很久，還沒開始', v:'P', w:2},{label:'想清楚了才開始', v:'P', w:1},
+    {label:'想一想就算了', v:'P', w:2},{label:'直接試了，試完才知道', v:'D', w:2},
+    {label:'一邊做一邊調整', v:'D', w:1}]},
+  q8:{d:0, prompt:'如果有一年完全不用擔心錢，你最想做什麼？', options:[
+    {label:'把一個專業練到頂尖，讓人刮目相看', v:'A', w:1},{label:'去做一直想做、但不賺錢的事', v:'M', w:2},
+    {label:'創業，證明自己做得到', v:'A', w:2},{label:'陪重要的人、旅行或做志工', v:'M', w:1}]},
+  q9:{d:1, prompt:{worker:'公司突然大改組，你的心情比較像？', student:'系上或學校突然大改制，你的心情比較像？', trans:'你原本熟悉的產業突然大洗牌，你的心情比較像？', founder:'你所在的市場突然大洗牌，你的心情比較像？'}, options:[
+    {label:'不安，希望快點穩定下來', v:'S', w:2},{label:'先保護好自己的位置', v:'S', w:1},
+    {label:'有點期待，說不定是機會', v:'E', w:1},{label:'終於有點變化了', v:'E', w:2}]},
+  q10:{d:2, prompt:'朋友問你某份工作要不要接，你最先問他什麼？', options:[
+    {label:'薪水和發展性如何', v:'L', w:1},{label:'公司穩不穩', v:'L', w:2},
+    {label:'想到要去那裡上班，你開心嗎', v:'I', w:1},{label:'你心裡第一個反應是什麼', v:'I', w:2}]},
+  q11:{d:3, prompt:'要學一個新工具，你會怎麼開始？', options:[
+    {label:'先看完教學再開始', v:'P', w:2},{label:'先找人問清楚', v:'P', w:1},
+    {label:'直接打開來亂按', v:'D', w:2},{label:'先做一個小東西試試看', v:'D', w:1}]},
+};
+const DIM_ORDER = ['q4','q5','q6','q7','q8','q9','q10','q11'];
+const DIM_PAIRS = [['q4','q8'],['q5','q9'],['q6','q10'],['q7','q11']];
+const QUESTIONS = ['q1','q2',...DIM_ORDER];
+const TOTAL_Q = QUESTIONS.length; // 10
+
+// 卡點 → 課程集數（課程部對照，誠實版）
+const EPISODES = {
+  direction:{ep:3, title:'找回讓你有能量的線索', line:'記下你最有勁和最被榨乾的時刻，從裡面找線索。它不會直接給你方向，但會讓你知道該往哪裡看。'},
+  value:{ep:2, title:'看清楚你現在站在哪裡', line:'把工作、財務、成長這幾個面向的分數攤開來看，先弄清楚卡住的是哪一塊。（這門課不教加薪或個人品牌）'},
+  people:{ep:2, title:'看清楚你現在站在哪裡', line:'在人際這個面向打分數，看清楚是哪一段關係在消耗你。（這門課不教溝通技巧）'},
+  future:{ep:7, title:'走出去，跟人聊', line:'帶著你想到的幾條路，去找走過類似路口的人聊，讓不確定慢慢變小。'},
+  compare:{ep:4, title:'你問的問題，可能本來就問錯了', line:'把「為什麼我不如他」改寫成一個問得出答案的問題。'},
+  family:{ep:6, title:'不要只有一條路', line:'其中一條路是「如果什麼都不用擔心」，它會幫你分開別人要的和你自己要的。'},
+  time:{ep:1, title:'先把腦袋裡的聲音寫下來', line:'第一集只要四個句子，十分鐘寫得完。整門課大約兩個半小時，加上寫工作單的時間。'},
+  restart:{ep:6, title:'不要只有一條路', line:'其中一條路是「如果這條路消失了」，幫你在重新出發前，多看見幾種可能。'},
+  explore:{ep:5, title:'讓思考跑得比你預期更遠', line:'從一個問題往外挖三層，標出讓你心動的方向。'},
+};
+const NOT_FOR = ['你想要有人直接告訴你「你應該做什麼」。這門課不會給你答案，答案只有你自己能給。',
+  '你現在正經歷很難熬的情緒低潮。請先找專業的諮商或醫療協助，這門課是陪你思考的工具，不能取代他們。'];
+const EP1_SENTENCES = ['我最近一直在想的事是——','我覺得最卡住的地方是——','如果這個問題解決了，我的生活會——','我一直沒有認真面對這件事，因為——'];
+
+const ORCHARD = [
+  {id:'o1', label:'在現在的位置，找到一件真正想做的事', tasks:[
+    '回想這個月讓你最有精神的一個小時，寫下當時在做什麼。',
+    '找出那件事裡你最喜歡的部分：是解決問題、和人互動，還是做出成品？',
+    '這週主動多做一次類似的事，做完記下自己的感覺。']},
+  {id:'o2', label:'用下班時間，試一個新領域', tasks:[
+    '列出三個你最近會主動點開來看的主題，圈出一個。',
+    '找一個已經在做這件事的人，看他最近的三篇分享，記下一個讓你好奇的地方。',
+    '花 15 分鐘做一個最小的嘗試，寫一段、畫一張或問一個問題，做完記下：有沒有一點點想再做？']},
+  {id:'o3', label:'先弄清楚我到底在意什麼', tasks:[
+    '寫下最近一次讓你很生氣或很感動的事。',
+    '問自己：那件事碰到了我在意的什麼？把它寫成一個詞。',
+    '把這個詞放在看得到的地方，這週用它檢查一個決定。']},
+  {id:'o4', label:'學一個讓自己更值錢的技能', tasks:[
+    '列出你身邊的人最近常在談的三個技能。',
+    '選一個，找一支 15 分鐘內的入門影片看完。',
+    '用剛學到的東西做一個很小的練習，例如改寫一份文件或做一張圖。']},
+  {id:'o5', label:'換一個環境，重新開始', tasks:[
+    '寫下你理想環境的三個條件，例如：人、節奏、做的事。',
+    '找一個符合其中兩個條件的地方或領域，看看裡面的人在做什麼。',
+    '找一位在那裡的人，問他一個你最好奇的問題。']},
+  {id:'o6', label:'找一個人好好聊聊我的想法', tasks:[
+    '想一個你信任、但最近很少聊天的人。',
+    '傳一則訊息約他 20 分鐘，喝咖啡或通電話都可以。',
+    '聊的時候不急著要答案，說說你最近在想的事，聽聽自己說出口的感覺。']},
+];
+
+const DIM_WORDS = [{A:'成就',M:'意義'},{S:'守護',E:'冒險'},{L:'理性',I:'直覺'},{P:'先想',D:'先做'}];
+
+/* 稱號文案：name, line（截圖句）, seen（別人眼中的你）, secret（只有你自己知道的）, moment（你可能有過這種時刻）,
+ *          light（你身上的光：每一型都用正面的話收尾）, str[3], work, people, stress, voice, reframe */
+const TYPES = {
+  ASLP:{name:'穩健建築師', line:'我不是還沒準備好，我是還沒允許自己不完美。',
+    seen:'你是那種排行程時，會先留好緩衝時間的人。別人說「先做再說」，你會點頭，然後默默在心裡把風險想過一輪。所以大家放心把事情交給你，你也很少讓人失望。',
+    secret:'最近可能有個念頭，你已經查了不少資料、存了好幾篇文章，卻還沒跟任何人說。不是不敢，是你不想在沒把握的時候被看見。對你來說，「蓋歪」比「來不及」可怕得多。',
+    moment:'週日晚上打開一份規劃，改了半小時，最後只是把字體調得更整齊。你知道自己在拖，只是拖得很有效率。',
+    light:'你蓋的東西會站很久，這是你最珍貴的地方。當你允許自己先蓋一個小房間，你會發現，你其實比自己以為的更早準備好了。',
+    str:[['規劃力','能把模糊的目標拆成可以執行的步驟。別人看到一團霧，你看到一張施工圖。'],['可靠','交給你的事，大家不用追進度。'],['耐力','願意為一個三年後才看得到的結果，每天累積一點。']],
+    work:'你是主管最放心的那種人。但你可能也發現了，被看見的不一定是做最多的人，而是先開口的人。你的東西很完整，只是常常比別人晚一步拿出來。',
+    people:'你是可靠的朋友，答應的事一定做到。不過你很少主動說自己卡在哪裡，總覺得要先整理好，才好意思讓別人知道。',
+    stress:'你會更用力地做計畫：列清單、排優先順序，好像只要計畫夠完整，焦慮就會退下去。有時候它真的會；有時候，計畫只是讓你暫時不用面對那個決定。',
+    voice:'等我再準備好一點就開始。', reframe:'我先做一個小版本，邊做邊補。'},
+  ASLD:{name:'實幹工匠', line:'我的實力，都藏在做完的東西裡。',
+    seen:'你是那種不太說、但一直在做的人。開會時話不多，交出來的東西卻總是最扎實的。別人還在討論，你已經默默把第一版做好了。',
+    secret:'有時候你會突然停下來，看著一整排做完的待辦，心裡冒出一句「然後呢？」。你很擅長把事情做完，卻很少有人問你，你想把自己做成什麼樣子。',
+    moment:'週五晚上，你終於把拖了兩週的案子結掉，鬆一口氣，打開手機卻不知道要做什麼。忙的時候很踏實，閒下來反而有點空。',
+    light:'你的手藝是真的，這是任何人都拿不走的底氣。只要替它加上一個方向，你做的每一件事，都會開始幫你鋪路。',
+    str:[['執行力','說到做到，事情交給你就會動起來。'],['專業累積','一點一滴，把手藝練到別人追不上。'],['務實','不被空話帶著走，看重真正的成果。']],
+    work:'你是團隊裡最可靠的執行者，最難的那塊常常落在你手上。只是做得越好，越容易被當成「做事的人」，而不是「決定方向的人」。',
+    people:'你表達關心的方式是幫忙，而不是說好聽的話。朋友搬家你一定到，但要你說說自己最近怎樣，你常常一句「還好啊」就帶過。',
+    stress:'你會把自己埋進工作裡，用做事讓心安靜下來。這很有效，只是做完之後，那個讓你不安的問題通常還在原地等你。',
+    voice:'先把眼前的做完再說。', reframe:'做完這件之後，我想讓它把我帶到哪裡？'},
+  ASIP:{name:'敏銳守望者', line:'我早就感覺到了，只是在等一個確定的訊號。',
+    seen:'你是團隊裡的雷達。會議室的氣氛一變、主管的語氣一轉，你通常是第一個察覺的人。大家遇到拿不定的事，會私下來問你「你覺得呢」。',
+    secret:'你其實早就感覺到「該變了」，可能比身邊的人早了好幾個月。但每次想動，你腦中就會跑出十種可能出錯的劇本，於是你決定再看看。',
+    moment:'你點開過某個職缺、某堂課、某個機會的頁面，看了很久，關掉。過幾天又點開，又關掉。它一直留在你的分頁裡，像一個你還沒準備好回答的問題。',
+    light:'你的直覺很少出錯，這是你最大的天賦。你不需要等到百分之百確定，只要給它一個小小的試驗場，你會發現自己的判斷比想像中更值得相信。',
+    str:[['洞察力','常比別人早一步看見變化。'],['風險意識','大家衝動時，你能看見該注意的地方。'],['觀察入微','別人忽略的細節，你都放在心上。']],
+    work:'你常常提早看出專案哪裡會出事，只是不一定會說出口，或說得很委婉。後來事情真的發生時，你心裡會有一點「我就知道」。',
+    people:'你很會察言觀色，朋友不用開口你就知道他不對勁。但輪到你自己不對勁時，你很少讓別人看出來。',
+    stress:'你會開始反覆推演：如果這樣會怎樣、如果那樣又會怎樣。想得越多，越難下決定，最後常常選擇「先不要動」。',
+    voice:'現在還不是時候。', reframe:'我可以先做一件風險很小的事，看看感覺對不對。'},
+  ASID:{name:'務實游擊手', line:'條件不完美？我照樣打得出一條路。',
+    seen:'你是大家口中「交給他就對了」的人。資源少、時間趕、狀況多，你總能在最後一刻變出辦法。越亂的場面，你越冷靜。',
+    secret:'你很久沒有為「自己想要的事」出手了。你的靈活全都用在幫別人救火，等火滅了，力氣也用得差不多了。',
+    moment:'某個安靜的晚上，你突然想：「如果沒有人需要我救火，我會想做什麼？」然後發現自己一時答不出來。',
+    light:'能在混亂裡找到路，是很少人有的本事。當你把這份本事用在自己身上，你會走得比誰都快。',
+    str:[['應變力','狀況再多，你都能找到解法。'],['資源整合','善用手邊有的東西，不等條件完美。'],['臨場反應','越緊急，越能看見你的冷靜。']],
+    work:'你是主管遇到麻煩時第一個想到的人。被需要的感覺很好，只是行事曆常常被別人的急事填滿，自己的計畫一直往後排。',
+    people:'朋友出事，你是最快趕到的那個。你很少開口要求什麼，因為你習慣自己處理好一切。',
+    stress:'你會進入「處理模式」，一件一件把事情搞定。這讓你撐過很多難關，但也讓你很少停下來問：這些事裡，哪一件是我真正在乎的？',
+    voice:'先把這個處理掉再說。', reframe:'這週，我留 30 分鐘給自己想做的事。'},
+  AELP:{name:'戰略棋手', line:'我要的不是快，是每一步都算數。',
+    seen:'你有企圖心，也有腦袋。別人看到的是眼前這一步，你看到的是三步之後。聊到未來，你總能說出一套清楚的藍圖，讓人聽了很有信心。',
+    secret:'那份藍圖你已經修了很多版。每多想一層，就多看到一個變數，於是你告訴自己「再等一下，時機更成熟再出手」。棋盤越看越清楚，手卻一直沒落下去。',
+    moment:'你的筆記裡可能有一份叫「計畫」或「下一步」的文件，結構完整、分析周全，最後修改日期是好幾個月前。',
+    light:'會想清楚再出手的人，一旦動起來，通常走得又穩又遠。你缺的從來不是能力，只是一個「先走一步看看」的允許。',
+    str:[['策略思考','能看見事情之間的關聯和先後。'],['目標感','清楚知道自己想要什麼成果。'],['長遠眼光','做決定時，會想到三步之後。']],
+    work:'你是會議裡把方向講得最清楚的人，大家常被你的分析說服。只是輪到要拍板時，你會希望再多一點資料。',
+    people:'朋友找你商量大事，因為你總能幫他理出頭緒。不過你自己的大事，你習慣想清楚才說，所以身邊的人常常是最後才知道。',
+    stress:'你會花更多時間做分析，把所有選項攤開來比較。這讓你看得很清楚，但也可能讓你錯過「其實已經夠清楚了」的那一刻。',
+    voice:'等計畫更完整一點。', reframe:'先走一步，局勢本來就會在下棋時改變。'},
+  AELD:{name:'火箭衝刺者', line:'目標在那裡，我會用最短的路抵達。',
+    seen:'你是那種定了目標就全速前進的人。別人還在討論可不可行，你已經排好時程、開始執行，進度一格一格往前推。挑戰對你來說是燃料。',
+    secret:'每次達成一個目標，開心大概只維持幾天，接著你就開始找下一個。你偶爾會想：我一直在跑，是因為想去哪裡，還是因為不習慣停下來？',
+    moment:'你達成了一個曾經很想要的目標：升遷、考到證照、數字達標。大家恭喜你的那天晚上，你回到家，心裡卻安靜得有點奇怪。',
+    light:'你的推進力是很稀有的能量，能讓很多事情真的發生。只要偶爾抬頭確認方向，你會跑到一個真正讓你心滿意足的地方。',
+    str:[['推進力','能讓停住的事情重新動起來。'],['效率','用最短的路徑完成任務。'],['抗壓','壓力越大，越能專注。']],
+    work:'你是交出成績最快的人，也常被賦予最難的目標。只是一個接一個衝刺，你很少有機會問：這些目標，是我要的，還是別人給的？',
+    people:'你很有行動力，約好的事一定會發生。但你的時間表很滿，親近的人有時會覺得，要排進你的行程裡才見得到你。',
+    stress:'你會加速，把事情做得更快、更多。這讓你很少被壓垮，但也可能讓你連「我累了」都來不及發現。',
+    voice:'再撐一下，達成就好了。', reframe:'達成之後，我希望自己是什麼樣子？'},
+  AEIP:{name:'遠見浪人', line:'我在等一個值得全力一躍的浪。',
+    seen:'你看得見別人還沒看到的機會。聊到趨勢和可能，你的眼睛會發亮，常常說出讓人「哇」一聲的想法。你不想隨便出手，因為你要的是真正值得的那一次。',
+    secret:'等浪的時間比你想的久。你心裡有幾個「其實那時候可以試試」的時刻，現在想起來還是有點可惜。你怕的不是失敗，而是把自己花在一個不夠好的浪上。',
+    moment:'你看到某個人做了一件你兩年前就想過的事，而且做得不錯。你一邊替他高興，一邊在心裡小聲說：「那個，我也想過。」',
+    light:'能看見遠方的人不多，你是其中一個。小浪也能讓你練習站上去，等真正的大浪來時，你會是最準備好的那個人。',
+    str:[['遠見','看得到別人還沒看到的機會。'],['直覺判斷','對「這件事值不值得」有很準的感覺。'],['格局','不會被眼前的小事困住。']],
+    work:'你常在會議裡提出很有前瞻性的想法，只是要你親自推動時，你會希望條件更成熟一點。',
+    people:'你是朋友圈裡的靈感來源，大家喜歡聽你聊未來。不過你很少讓別人看到你還沒想完整的樣子。',
+    stress:'你會退到一旁觀察，等待更好的時機。這保護了你，但也讓一些本來可以練習的機會悄悄溜走。',
+    voice:'這個機會還不夠好。', reframe:'小浪也可以先練習站上去。'},
+  AEID:{name:'閃電行動家', line:'我不需要更多開始，我需要一個值得完成的開始。',
+    seen:'別人眼中的你，反應快、敢衝，好像什麼都不怕。朋友有新點子，第一個說「好啊來做」的通常是你；會議冷場時，先丟出想法的也常是你。',
+    secret:'你不是不怕，你是更怕停下來。一停下來，「我到底要去哪裡」這個問題就會追上來，所以你寧願一直動。',
+    moment:'一個點子讓你興奮到半夜睡不著，隔天一早就開了資料夾、取好名字。三週後，它躺在你的備忘錄裡，旁邊還有好幾個它的兄弟姊妹。',
+    light:'你的勇氣是真的，你只需要給它一個值得停留的地方。等你選定一件事做到底，你會發現，被看見的感覺比任何新開始都過癮。',
+    str:[['啟動力','想到就做，比多數人更早拿到真實的回饋。'],['嗅覺','常常比別人早一步感覺到機會在哪裡。'],['不怕重來','失敗對你來說是資訊，不是判決。']],
+    work:'你是點子最多、最敢接新任務的人。但你可能也發現，被記住的往往是把一件事做完、做到讓人看得見的人。你做過的很多，大家記得的卻沒那麼多。',
+    people:'你是帶氣氛的那個人，大家喜歡跟你一起冒險。只是你答應得很快，偶爾會把自己排得太滿，最後讓自己和別人都有點失望。',
+    stress:'你的第一反應是「換一個方向」。新的開始會讓你重新有能量，但如果每次都在卡住的地方轉彎，你會一直站在不同的路口，卻很少走到盡頭。',
+    voice:'這個好像不太對，換一個試試看。', reframe:'這一個，我先做到讓別人看得見。'},
+  MSLP:{name:'深思學者', line:'我不是想太多，我是想把它想通。',
+    seen:'你是朋友眼中的「明白人」。你看書、聽 Podcast、會把想法記下來，聊到人生的大問題，總能說出讓人停下來想一想的話。',
+    secret:'有些問題你已經想了很多年，答案好像越來越清楚，卻還沒真的動過。你心裡隱約知道，有些事想不通，是因為還沒去做。',
+    moment:'你可能收藏了很多「之後要看」的文章和書，也寫過不只一次年度反思。每次寫完都很有感覺，然後生活又照原來的樣子繼續。',
+    light:'你想事情的深度，是很多人羨慕不來的。當你讓一個小行動陪你一起想，那些想了很久的答案，會更快長出來。',
+    str:[['思考深度','能把一件事想得比別人更透徹。'],['自我反省','願意誠實面對自己的想法。'],['原則','清楚知道什麼對你來說重要。']],
+    work:'你做事有自己的原則，在意「為什麼要這樣做」。這讓你的工作很有品質，但當公司要的是「先做再說」時，你會覺得有點卡。',
+    people:'你是很好的傾聽者，朋友喜歡跟你深聊。不過你自己的煩惱，你多半選擇先自己想通，再輕描淡寫地說出來。',
+    stress:'你會回到腦袋裡，一遍又一遍地想。想清楚會讓你安心，但想太久，也會讓你離那件事越來越遠。',
+    voice:'我還沒想清楚。', reframe:'我可以一邊做，一邊想清楚。'},
+  MSLD:{name:'日常園丁', line:'每天澆一點水，花自己會開。',
+    seen:'你是生活很有秩序的人。你有自己的節奏和小習慣，答應的事會一點一點做到。身邊的人跟你在一起會覺得安心，像回到一個熟悉的地方。',
+    secret:'日子過得還不錯，但你偶爾會在某個平常的下午，突然想起一件很久以前想做、卻一直沒開始的事。它不急，只是一直都在。',
+    moment:'你的生活像一份運作順暢的時間表，週一到週五都很穩定。但某個週日晚上，你翻到以前的照片或日記，發現那時的自己好像比較敢做夢。',
+    light:'你懂得照顧日常，這是很多人學不會的能力。只要在這片花園裡留一小塊地給新種子，你的生活會在不知不覺間開出新的花。',
+    str:[['持續力','能把一件小事做很久。'],['踏實','不浮誇，每一步都算數。'],['照顧細節','把日常經營得有條有理。']],
+    work:'你是讓團隊穩定運轉的人，交給你的流程很少出錯。只是穩定久了，你可能也想要一點新的挑戰，卻不確定怎麼開口。',
+    people:'你會記得朋友的生日、喜歡的口味，用很日常的方式照顧人。不過你自己想要什麼，你很少主動說。',
+    stress:'你會更努力維持日常的秩序，把該做的事一件件做好。這讓你穩住了，但心裡那個「想要不一樣」的聲音，也可能被一起壓下去。',
+    voice:'現在這樣也還好。', reframe:'我可以在日常裡，種下一顆新種子。'},
+  MSIP:{name:'月光詩人', line:'我在等心裡說「就是它」的那一刻。',
+    seen:'你感受細膩，很容易被一首歌、一句話、一個畫面打動。你能察覺別人沒說出口的情緒，朋友常說跟你聊天很舒服，因為你「懂」。',
+    secret:'你對很多事都有感覺，卻很少有一件事讓你篤定地說「就是它」。你在等那個確定的訊號，而等待本身，有時候讓你有點累。',
+    moment:'深夜看完一部電影或一篇文章，心裡被某句話輕輕撞了一下，想著「我也想過那樣的生活」。隔天醒來，那個感覺還在，只是不知道要放到哪裡。',
+    light:'你的感受力是一種天賦，能讓你做出真正打動人的東西。「就是它」的感覺，常常是在動手之後才出現的，而你值得給自己這個機會。',
+    str:[['感受力','能接住別人沒說出口的感受。'],['同理','很自然地站在別人的角度想。'],['美感','對好的東西有自己的判斷。']],
+    work:'你在意工作有沒有意義，做喜歡的事時會特別投入。只是遇到沒感覺的任務，你會比別人更難提起勁。',
+    people:'你很會照顧別人的情緒，是朋友想找人說話時的第一個選擇。但你自己的心情，常常只留給日記或深夜。',
+    stress:'你會往內縮，需要一點自己的空間。這是你充電的方式，只要記得，充完電後也可以找一個信任的人說說。',
+    voice:'感覺還沒來。', reframe:'感覺常常是在做的過程中長出來的。'},
+  MSID:{name:'溫暖守護者', line:'我照顧好大家，也想學會照顧自己。',
+    seen:'你是大家可以依靠的人。誰需要幫忙，你常常比對方更早發現，也很自然地伸出手。有你在的地方，總是比較溫暖。',
+    secret:'你很習慣把自己排在最後。別人的需要你一眼就看見，自己想要什麼，卻常常要想很久，甚至覺得想這些有點自私。',
+    moment:'有人問你「那你呢？你想要什麼？」你愣了一下，笑著說「我都可以啊」。回家的路上，那個問題一直跟著你。',
+    light:'你給出去的溫暖，身邊的人都感受得到。當你把同樣的溫柔留一點給自己，你會發現，你能照顧的人反而更多了。',
+    str:[['照顧力','讓身邊的人覺得被在乎。'],['值得信任','大家有事時，第一個想到你。'],['行動中的溫柔','不只說關心，還會實際做點什麼。']],
+    work:'你是團隊裡的潤滑劑，常默默接下別人沒做完的事。大家都很喜歡你，只是你的努力不一定被看見，你也不太會去爭。',
+    people:'你是朋友圈裡的照顧者，記得每個人的難處。但你很少開口求助，因為你不想造成別人的麻煩。',
+    stress:'你會更努力地照顧別人，好像讓大家都好了，自己就會好一點。這很溫柔，只是別忘了，你也值得被照顧。',
+    voice:'等大家都好了，再來想我自己。', reframe:'照顧自己，也是照顧身邊人的方式。'},
+  MELP:{name:'好奇製圖師', line:'每條路我都想看看，所以我先畫一張地圖。',
+    seen:'你興趣廣、學得快，什麼都想了解一點。朋友想入門一個新領域，常常會來問你，因為你總能說出一套整理好的重點。',
+    secret:'選項越多，你越難決定先走哪一條。你收藏了很多可能性，心裡偶爾會冒出一句：「我是不是什麼都會一點，卻沒有一樣真的屬於我？」',
+    moment:'你的書籤或購物車裡，可能同時躺著好幾個不同領域的課程或書。每一個都讓你心動，最後哪一個都還沒開始。',
+    light:'能把不同領域串在一起，正是這個時代最需要的能力。你不必選對唯一的路，只要先走進其中一條，地圖會在你腳下自己長出來。',
+    str:[['學習力','新東西上手得很快。'],['整合力','能把不同領域的東西連在一起。'],['好奇心','對世界一直保持新鮮感。']],
+    work:'你在工作上常常是「什麼都可以問他」的人。只是興趣太多，你偶爾會懷疑自己的專業到底是什麼。',
+    people:'你是很有趣的聊天對象，什麼話題都接得住。不過你很少說自己真正想往哪裡走，因為你自己也還在找。',
+    stress:'你會開始研究更多選項，好像多一點資訊就能做出更好的選擇。其實很多時候，你需要的不是更多資訊，而是先選一條試試。',
+    voice:'每一條都好像不錯。', reframe:'我不用選對，只要先選一條走走看。'},
+  MELD:{name:'實驗探險家', line:'試了才知道，我是不是真的喜歡。',
+    seen:'你用嘗試認識世界。新的課、新的工作方法、新的興趣，你都願意先試試看。朋友常說你的經歷很豐富，每次見面都有新故事。',
+    secret:'試過那麼多之後，你偶爾會懷疑「我到底在找什麼」。每一段經驗都有收穫，卻好像還沒拼成一個完整的你。',
+    moment:'有人請你自我介紹時，你會停頓一下，因為不知道該從哪一段經歷說起。那些經驗都是真的，只是還沒有一條線把它們串起來。',
+    light:'你累積的經驗，比你以為的更有價值。只要找到它們的共同點，這些看似零散的嘗試，會變成一條只有你走得出來的路。',
+    str:[['嘗試精神','願意先做做看，不怕出錯。'],['適應力','到新環境很快就能進入狀況。'],['從經驗學習','每次嘗試都能帶走一點東西。']],
+    work:'你常主動接新任務、試新方法，是團隊裡的開路者。只是嘗試太多，你可能還沒找到最想深耕的那一塊。',
+    people:'你是很好的旅伴和夥伴，大家喜歡跟你一起做新鮮事。不過你很少停下來跟朋友聊：這些嘗試對你來說代表什麼。',
+    stress:'你會想換個新環境或新方法，重新開始。新鮮感能讓你重新有力氣，但也可能讓你錯過「再撐一下就會開花」的那個點。',
+    voice:'再試一個新的吧。', reframe:'我試過的這些，有什麼共同點？'},
+  MEIP:{name:'星空夢想家', line:'我腦袋裡有一整個宇宙，正在找出口。',
+    seen:'你想像力豐富，常常想像不一樣的生活和可能。跟你聊天的人會被你帶去很遠的地方，你在意的是活得有意義、活得像自己。',
+    secret:'夢想在腦袋裡放太久，有時候會變成一種壓力。你常覺得「我應該可以更多」，卻不知道該從哪一小步開始，於是那個宇宙越來越大，出口卻一直沒找到。',
+    moment:'通勤的時候，你腦中已經把另一種人生演完了一遍：在哪裡生活、做什麼、跟誰在一起。到站下車，你又回到原本的那一天。',
+    light:'能想像還不存在的東西，是一切創造的開始。你不需要一次完成整個夢，只要今天為它做一件很小的事，宇宙就會開始有出口。',
+    str:[['想像力','能看見還不存在的可能。'],['理想','心裡有一個值得追的方向。'],['創意','總能想到別人沒想到的點子。']],
+    work:'你在發想的階段最有光，常常提出讓人眼睛一亮的點子。只是落到細節和執行時，你會覺得自己的熱情慢慢被消耗。',
+    people:'你是朋友圈裡的夢想家，大家喜歡聽你說故事。不過那些最重要的夢，你通常只說給很少的人聽。',
+    stress:'你會躲進想像裡，讓自己喘口氣。這是你的避風港，只是別忘了，夢想也需要你回到現實為它做點什麼。',
+    voice:'總有一天我會去做。', reframe:'今天，我可以為那個夢做一件很小的事。'},
+  MEID:{name:'自由煙火師', line:'人生太短，每種顏色我都想試試看。',
+    seen:'你熱愛自由，跟著感覺走，常常帶給身邊的人驚喜和能量。有你在的場合，氣氛總是比較熱。你不怕新東西，反而怕生活太無聊。',
+    secret:'熱情來得快，也走得快。你偶爾會羨慕那些能把一件事做很久的人，心裡想：「有沒有一件事，能讓我一直燒下去？」',
+    moment:'你可能為一個新興趣一口氣買齊了裝備，熱血了兩個月，之後它就安靜地待在櫃子裡。你不後悔，只是偶爾會想，下一個會不會不一樣。',
+    light:'你的熱情能點亮身邊的人，這是一種很珍貴的天賦。當你找到一件值得一直燒的事，你會是最亮、也最久的那一束光。',
+    str:[['熱情','做喜歡的事時，整個人會發光。'],['感染力','能把身邊的人一起帶動起來。'],['勇於嘗試','新的可能出現時，你總是第一個舉手。']],
+    work:'你在新專案的開頭最有衝勁，常常是點燃團隊的人。只是當事情進入重複和細節，你會需要一些新的刺激才撐得下去。',
+    people:'你是朋友圈裡的開心果，大家喜歡找你玩。不過當你心情低落時，你常常選擇自己消化，不想掃大家的興。',
+    stress:'你會想換個地方、換件事做，讓自己重新點火。這能讓你很快恢復，只是偶爾也可以試試看，在原地多待一下，會不會看見不一樣的風景。',
+    voice:'這個沒感覺了，換一個。', reframe:'我想讓哪一件事，燒得久一點？'},
+};
+function typeOf(code){ return TYPES[code]; }
+
+const STUCK = {
+  direction:{name:'方向不明', note:'覺得悶、說不出哪裡不對，常常是心裡已經在醞釀下一步的訊號。方向通常不是想出來的，而是從一次次小小的嘗試裡慢慢浮現。'},
+  value:{name:'價值沒被看見', note:'覺得自己值得更多，代表你清楚自己的價值。接下來要做的，是找到讓別人也看得見的方式。'},
+  people:{name:'人際的消耗', note:'會被關係消耗，是因為你在乎。先看清楚是哪一段關係在拿走你的力氣，你就能把力氣拿回來，留給真正重要的人和事。'},
+  future:{name:'未來的不確定', note:'對未來感到不確定，是變化很快的時代裡很正常的感覺。好消息是，不確定也代表還有很多可能，路還沒被寫死。'},
+  compare:{name:'比較的壓力', note:'你羨慕的樣子，往往藏著你自己想要的東西。把那份羨慕翻過來看，它會變成一張指向你自己的地圖。'},
+  family:{name:'外在期待', note:'能感覺到期待的重量，代表你一直很認真地回應身邊的人。接下來，你也值得認真地問問自己想要什麼。'},
+  time:{name:'時間被占滿', note:'時間被占滿，不代表你沒有想法，只是想法還沒有空間長出來。哪怕每週留給自己一小時，都會開始不一樣。'},
+  restart:{name:'重新出發', note:'停下來的這段時間，也是重新選擇方向的機會。很多人回頭看，都會發現那段空白，是人生轉彎最重要的地方。'},
+  explore:{name:'探索', note:'在狀態不錯的時候探索自己，往往看得最清楚。你已經有餘裕，接下來可以大膽一點，問問自己下一步想往哪裡長。'},
+};
+// 稱號 × 卡點交叉句：CROSS[卡點][P 先想 或 D 先做]
+const CROSS = {
+  direction:{P:'對習慣先想清楚再走的你來說，方向不明特別難受。試試看反過來：先做一件小事，讓答案有機會來找你。',
+    D:'你習慣邊做邊找，只是最近做的事好像都沒帶來答案。也許不是要做更多，而是停下來看看，哪一件事讓你最有感覺。'},
+  value:{P:'你習慣把事情準備得很完整，卻不一定會主動讓人看見。這一次，試著在還沒完美的時候，就把成果拿出來。',
+    D:'你做了很多，但做的事不一定會自己說話。試著幫你的成果說一句話，讓別人知道它為什麼重要。'},
+  people:{P:'你會在心裡反覆想那些讓你累的對話。試著把它寫下來，你會更清楚，哪一段關係值得你繼續花力氣。',
+    D:'你習慣直接處理問題，所以人際的拉扯特別消耗你。有些關係不需要馬上解決，先拉開一點距離，也是一種處理。'},
+  future:{P:'你想把未來想清楚，可是世界變得比想的還快。也許可以先畫出三條可能的路，而不是等一條確定的答案。',
+    D:'你願意邊走邊看，這在變動的時代是很大的優勢。只要偶爾停下來校準方向，你會比多數人更快找到自己的位置。'},
+  compare:{P:'你會把別人的成就拿來和自己的計畫比，越比越覺得落後。但你的時間表是你自己的，別人只是走在另一條路上。',
+    D:'看到別人做得好，你的第一反應可能是「我也要」。先停一下問問自己：我羨慕的是那個結果，還是那種生活？'},
+  family:{P:'你會把家人的期待放進每一個計畫裡，想得很周全。也許可以在計畫裡，留一格只屬於你自己的位置。',
+    D:'你常用行動回應別人的期待，做著做著就忘了問自己。下次動手之前，先問一句：這是我想要的嗎？'},
+  time:{P:'你腦中有很多計畫，只是一直排不進行事曆。試著先把最小的一步放進去，比把整個計畫排好更有用。',
+    D:'你一直在做，連停下來想的時間都沒有。也許你最需要的不是更多效率，而是每週一段什麼都不做的時間。'},
+  restart:{P:'你想把下一步規劃好再出發，這很好。只是別讓規劃變成等待，先跨出一小步，計畫會跟著變得更清楚。',
+    D:'你已經準備好動起來了。在衝出去之前，花一點時間想想：這一次，你想要什麼不一樣？'},
+  explore:{P:'你喜歡把自己想清楚，現在正是好時機。試著把想到的可能性都寫下來，你會發現選擇比想像中多。',
+    D:'你喜歡邊做邊認識自己，那就挑一件最近讓你好奇的事，給它一個月的時間認真試試。'},
+};
+
+/* ===================== APP ===================== */
+const $ = s=>document.querySelector(s);
+const $$ = s=>[...document.querySelectorAll(s)];
+const view = $('#view');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const hasG = ()=>!!window.gsap && !reduce;
+const sleep = ms=>new Promise(r=>setTimeout(r, reduce?0:ms));
+const esc = s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const S = {animal:null, fruit:null, color:'pinkviolet', aOther:'', fOther:'', name:'',
+  route:null, q1:null, pains:[], main:null, answers:{}, orchard:null, form:{}, rating:0,
+  serial:Math.floor(Math.random()*9000)+1000, friend:null};
+
+/* ---------- data recording ---------- */
+// 送到 Apps Script（試算表「夢遊扭蛋島_名單」）。作答事件只帶隨機場次編號 sid、不含 Email；
+// 領取報告（unlock）只帶 Email 與分眾欄位，用另一個隨機編號，兩邊對不起來。
+const SID = Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4);
+function record(evt, data){
+  if(!ENDPOINT || S.restored) return;
+  const body = evt==='unlock' ? {sid:'u'+Math.random().toString(36).slice(2,12), evt, data} : {sid:SID, evt, data};
+  try{ fetch(ENDPOINT,{method:'POST',mode:'no-cors',keepalive:true,headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)}); }catch(e){}
+}
+
+/* ---------- report link (報告信裡的連結會帶這段，重新打開完整報告書) ---------- */
+function reportToken(){
+  const o={a:S.animal,fr:S.fruit,c:S.color,ao:S.aOther,fo:S.fOther,n:S.name,r:S.route,q1:S.q1,m:S.main,
+    ans:Object.fromEntries(Object.entries(S.answers).map(([k,v])=>[k,v.i])),s:S.serial,ind:S.form.industry||''};
+  const b=new TextEncoder().encode(JSON.stringify(o)); let bin=''; b.forEach(x=>bin+=String.fromCharCode(x));
+  return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function restoreReport(tok){
+  try{
+    const bin=atob(tok.replace(/-/g,'+').replace(/_/g,'/')); const o=JSON.parse(new TextDecoder().decode(Uint8Array.from(bin,c=>c.charCodeAt(0))));
+    if(!(BASE[o.a]||o.a==='other') || !Q2_BY_ROUTE[o.r] || !PAINS[o.m]) return false;
+    Object.assign(S,{animal:o.a, fruit:FRUITS.some(f=>f.id===o.fr)?o.fr:null, color:COLORS.some(c=>c.id===o.c)?o.c:'pinkviolet',
+      aOther:String(o.ao||'').slice(0,6), fOther:String(o.fo||'').slice(0,6), name:String(o.n||'').slice(0,8), route:o.r, q1:o.q1,
+      pains:[o.m], main:o.m, serial:+o.s||S.serial, form:{industry:String(o.ind||'').slice(0,20)}, restored:true});
+    for(const [k,i] of Object.entries(o.ans||{})){ const Q=DIMQ[k]; if(Q&&Q.options[i]) S.answers[k]={i, v:Q.options[i].v, w:Q.options[i].w}; }
+    typeCode(); return true;
+  }catch(e){ return false; }
+}
+
+/* ---------- helpers ---------- */
+function aLabel(st=S){ if(st.animal==='other') return (st.aOther||'').trim()||'神秘生物'; const a=ANIMALS.find(a=>a.id===st.animal); return a?a.label:''; }
+function fLabel(st=S){ if(st.fruit==='other') return (st.fOther||'').trim()||'神秘果'; const f=FRUITS.find(f=>f.id===st.fruit); return f?f.label:''; }
+function dispName(st=S){ if(!st.animal) return ''; const b=(st.fruit?fLabel(st):'')+aLabel(st); return st.name&&st.name.trim()?`${b}・${st.name.trim()}`:b; }
+function petName(st=S){ return (st.name&&st.name.trim()) || ((st.fruit?fLabel(st):'')+aLabel(st)); }
+function applyColor(){ const c=COLORS.find(c=>c.id===S.color)||COLORS[0]; document.documentElement.style.setProperty('--c-a',c.a); document.documentElement.style.setProperty('--c-b',c.b); }
+const swBg = c=> c.rainbow?'conic-gradient(#FF5FD2,#FFB23D,#E8FF4D,#3DF5D0,#3D8BFF,#A98BFF,#FF5FD2)':`linear-gradient(135deg,${c.a},${c.b})`;
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),3000);}
+function modal(html){ const m=document.createElement('div'); m.className='modal'; m.innerHTML=`<div class="box">${html}<div class="center" style="margin-top:14px"><button class="ghost">關閉</button></div></div>`; m.onclick=e=>{ if(e.target===m||e.target.tagName==='BUTTON') m.remove(); }; document.body.appendChild(m); }
+function render(html){ view.innerHTML = `<div class="fadein">${html}</div>`; window.scrollTo({top:0}); }
+function stageHTML(id, st=S){ return `<div class="stage"><div class="beam"></div><div class="halo"></div><div class="toy" id="${id}">${toySVG(st)}</div><svg class="ped" viewBox="0 0 230 70">${pedestal()}</svg></div>`; }
+function pulse(el, cls){ if(!el||reduce) return; el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
+
+const ZONES = [
+  {name:'心聲森林', color:'#3DDC97', fx:'leaf'},
+  {name:'真心湖', color:'#4FA8FF', fx:'ripple'},
+  {name:'靈感果園', color:'#FF9A3D', fx:'fruit'},
+  {name:'扭蛋機', color:'#FF5FD2', fx:''},
+  {name:'回聲山谷', color:'#A98BFF', fx:'echo'},
+];
+let curZone = -1;
+function setZone(i){
+  curZone = i;
+  const z = ZONES[i];
+  document.documentElement.style.setProperty('--zone', z ? z.color : '#8B5CFF');
+  const fx = $('#fx'); fx.className = 'fx ' + (z?z.fx:''); fx.innerHTML='';
+  if(z && z.fx && !reduce){
+    for(let k=0;k<14;k++){ const d=document.createElement('i'); d.style.left=Math.random()*100+'%'; d.style.animationDuration=(9+Math.random()*9)+'s'; d.style.animationDelay=(-Math.random()*14)+'s'; fx.appendChild(d); }
+  }
+}
+function zoneBar(){
+  if(curZone<0) return '';
+  return `<div class="zones">${ZONES.map((z,i)=>`<span class="${i<=curZone?'done':''}"></span>`).join('')}</div>
+    <div class="zonename"><b>${ZONES[curZone].name}</b><span>${curZone+1} / 5</span></div>`;
+}
+
+/* ---------- friend link ---------- */
+(function parseFriend(){
+  const p = new URLSearchParams(location.search);
+  const t = p.get('t'), a = p.get('a');
+  if(t && TYPES[t] && a && (BASE[a]||a==='other')){
+    S.friend = {type:t, animal:a, fruit:FRUITS.some(f=>f.id===p.get('fr'))?p.get('fr'):null,
+      color:COLORS.some(c=>c.id===p.get('c'))?p.get('c'):'pinkviolet',
+      aOther:(p.get('ao')||'').slice(0,6), fOther:(p.get('fo')||'').slice(0,6), name:(p.get('n')||'').slice(0,8)};
+  }
+})();
+
+/* ================= INTRO ================= */
+function renderIntro(){
+  setZone(-1); curZone=-1; applyColor();
+  const f = S.friend;
+  const friendBlock = f ? `<div class="friend-intro"><div class="toy">${toySVG(f)}</div>
+      <p><b>${esc(f.name||'你的朋友')}</b> 是一隻${esc(fLabelOf(f)+aLabelOf(f))}，稱號是「${TYPES[f.type].name}」。<br>你心裡住的是哪一隻？</p></div>` : '';
+  render(`
+    ${f ? friendBlock : `<div class="lineup">${[
+      {animal:'capy',fruit:'lemon',color:'lime'},{animal:'frenchie',fruit:'tomato',color:'coral'},{animal:'cat',fruit:'grape',color:'pinkviolet'}
+    ].map((st,i)=>`<div class="toy ${i===1?'mid':''}">${toySVG(st)}</div>`).join('')}</div><div class="shelf"></div>`}
+    <h1 class="hero">${heroLine()}</h1>
+    <p class="lead">島中央有一台扭蛋機，裡面住著一隻跟你很像的守護獸。回答 10 個問題，扭蛋機會轉出牠。牠會說出一些你心裡知道、卻一直沒說出口的事。</p>
+    <button class="btn" id="go">${f?'我已滿 18 歲，看看我的':'我已滿 18 歲，進島'}</button>
+    <div><button class="linkbtn" id="u18">未滿 18 歲？</button></div>
+    <div class="meta"><span>約 <b>3</b> 分鐘</span><span>免註冊</span><span>${f?'玩完看你們的組隊默契':'結果可分享'}</span></div>
+    <p class="fine">以設計思考設計的自我探索遊戲，結果不代表人格或心理狀態評估。作答內容以匿名方式記錄，用於改善遊戲，詳見<button class="linkbtn" id="pv" style="font-size:12px">隱私權政策</button>。</p>
+  `);
+  $('#go').onclick=()=>{ record('start',{friend:!!f}); S.step=0; renderCreate(); };
+  $('#u18').onclick=renderUnder18;
+  $('#pv').onclick=()=>modal(PRIVACY_NOTE);
+}
+// 開場標題依玩的時間換（玩家手機的時間）
+function heroLine(){
+  const d=new Date(), day=d.getDay(), h=d.getHours();
+  const sunNight=(day===0&&h>=18)||(day===1&&h<4);
+  const weekdayNight=!sunNight&&((day>=1&&day<=5&&h>=18)||(day>=2&&day<=6&&h<4));
+  const weekdayDay=day>=1&&day<=5&&h>=4&&h<18;
+  if(sunNight) return '週日晚上<br>睡不著的人，<br>都會掉到<br>這座島。';
+  if(weekdayNight) return '下班後還在想<br>「這樣下去好嗎」<br>的人，都會掉到<br>這座島。';
+  if(weekdayDay) return '上班時偷偷想著<br>「我到底要什麼」<br>的人，都會掉到<br>這座島。';
+  return '放假也放不下<br>心裡那件事的人，<br>都會掉到<br>這座島。';
+}
+function aLabelOf(st){ return aLabel(st); }
+function fLabelOf(st){ return st.fruit?fLabel(st):''; }
+function renderUnder18(){
+  render(`<div style="padding-top:40px">${stageHTML('u18toy',{animal:'hamster',fruit:'peach',color:'sakura',name:''})}
+    <h2 style="margin-top:28px">這座島，等你長大一點再來。</h2>
+    <p class="lead">夢遊扭蛋島是為即將出社會和已經在工作的大人設計的。等你滿 18 歲，島還會在這裡。</p>
+    <p class="fine">這個頁面不會記錄任何資料。</p>
+    <button class="ghost" id="back">回到開場</button></div>`);
+  $('#back').onclick=renderIntro;
+}
+
+/* ================= CREATE (single page) ================= */
+function renderCreate(){
+  render(`
+    <div class="say"><svg viewBox="0 0 60 70">${guideSvg()}</svg><p>我是扭扭，島上的導遊。先捏一隻你的守護獸，憑第一直覺選就好。</p></div>
+    <div class="ctop" id="ctop"><div class="stage small"><div class="halo"></div><div class="toy" id="pv">${toySVG(S)}</div></div>
+      <div class="tag"><div class="n" id="pvName"></div><div class="s" id="pvSub"></div></div></div>
+    <div class="cblock"><h2>你最喜歡哪種動物？</h2>
+      <div class="grid" id="gA">${ANIMALS.map(a=>`<button class="opt" data-v="${a.id}" aria-pressed="${S.animal===a.id}">${a.id==='other'?'<span class="q">?</span>':toySVG({animal:a.id,color:S.color},{noHat:true})}<span>${a.label}</span></button>`).join('')}</div>
+      <div id="oA" class="${S.animal==='other'?'':'hidden'}" style="margin-top:10px"><input class="field" id="aOther" maxlength="6" placeholder="你的動物，例如：蜜蜂" value="${esc(S.aOther)}" aria-label="自己填動物"></div></div>
+    <div class="cblock"><h2>你最喜歡吃什麼水果？</h2><p class="hint">它會變成守護獸頭上的帽子。</p>
+      <div class="grid" id="gF">${FRUITS.map(f=>{const u=++uidN;return `<button class="opt" data-v="${f.id}" aria-pressed="${S.fruit===f.id}">${f.id==='other'?'<span class="q">?</span>':`<svg viewBox="-36 -54 72 72"><defs>${fruitDefs(f.id,u)}</defs>${fruitHat(f.id,u)}</svg>`}<span>${f.label}</span></button>`;}).join('')}</div>
+      <div id="oF" class="${S.fruit==='other'?'':'hidden'}" style="margin-top:10px"><input class="field" id="fOther" maxlength="6" placeholder="你的水果，例如：榴槤" value="${esc(S.fOther)}" aria-label="自己填水果"></div></div>
+    <div class="cblock"><h2>選一種光</h2><p class="hint">你狀態最好的時候，大概是什麼顏色？</p>
+      <div class="swatches" id="gC">${COLORS.map(c=>`<button class="sw" data-v="${c.id}" aria-pressed="${c.id===S.color}"><i style="background:${swBg(c)}"></i>${c.name}</button>`).join('')}</div></div>
+    <div class="cblock"><h2>幫牠取個名字 <small style="font-size:13px;color:var(--ink-3);font-weight:400">選填</small></h2>
+      <input class="field" id="pname" maxlength="8" placeholder="例如：小米（最多 8 個字）" value="${esc(S.name)}" aria-label="守護獸的名字"></div>
+    <div class="err center" id="cerr"></div>
+    <div class="stickybar"><button class="btn wide" id="next">完成，出發</button></div>
+  `);
+  const upd=(anim)=>{
+    applyColor();
+    const pv=$('#pv'); pv.innerHTML=toySVG(S); if(anim) pulse(pv, anim);
+    $('#pvName').textContent = dispName()||'還沒成形';
+    const c=COLORS.find(c=>c.id===S.color);
+    $('#pvSub').textContent = S.animal?`光芒：${c.name}`:'選一隻動物開始';
+    $('#cerr').textContent='';
+  };
+  upd();
+  const pick=(gid, key, box, input, anim)=>{ $(gid).onclick=e=>{
+    const b=e.target.closest('[data-v]'); if(!b) return; const v=b.dataset.v; S[key]=v;
+    $$(gid+' [data-v]').forEach(x=>x.setAttribute('aria-pressed', x===b));
+    if(box){ $(box).classList.toggle('hidden', v!=='other'); if(v==='other'){ $(input).focus(); toast('這個我沒看過，你可能是島上的限定款。'); } }
+    if(key==='color') ripple(b);
+    upd(anim);
+  }; };
+  pick('#gA','animal','#oA','#aOther','morph');
+  pick('#gF','fruit','#oF','#fOther','hatdrop');
+  pick('#gC','color',null,null,null);
+  $('#aOther').oninput=e=>{ S.aOther=e.target.value; upd(); };
+  $('#fOther').oninput=e=>{ S.fOther=e.target.value; upd(); };
+  $('#pname').oninput=e=>{ S.name=e.target.value; upd(); };
+  $('#next').onclick=()=>{
+    const miss=[];
+    if(!S.animal || (S.animal==='other'&&!S.aOther.trim())) miss.push('動物');
+    if(!S.fruit || (S.fruit==='other'&&!S.fOther.trim())) miss.push('水果');
+    if(miss.length){ $('#cerr').textContent=`還沒選${miss.join('和')}喔。`; return; }
+    record('character',{animal:S.animal,aOther:S.aOther,fruit:S.fruit,fOther:S.fOther,color:S.color});
+    setZone(0); renderForest();
+  };
+}
+
+function ripple(el){
+  if(reduce) return;
+  const r=el.getBoundingClientRect(); const d=document.createElement('div'); d.className='ripplefx';
+  d.style.left=(r.left+r.width/2)+'px'; d.style.top=(r.top+23)+'px'; document.body.appendChild(d);
+  if(window.gsap) gsap.to(d,{width:260,height:260,opacity:0,duration:.8,ease:'power2.out',onComplete:()=>d.remove()}); else d.remove();
+}
+
+/* ================= GACHA ================= */
+function renderGacha(){
+  record('answers',{code:typeCode().code, route:S.route, q1:S.q1, main:S.main, answers:Object.fromEntries(Object.entries(S.answers).map(([k,v])=>[k,v.i]))});
+  render(`
+    <div class="say"><svg viewBox="0 0 60 70">${guideSvg()}</svg><p>10 個答案都收好了。把它們投進扭蛋機，看看你心裡住著誰。</p></div>
+    <div class="gstage">
+      <svg class="machine" id="machine" viewBox="0 0 240 340" aria-label="扭蛋機">${machineSVG()}
+        <g class="marquee">${[50,74,98,122,146,170,194].map((x,i)=>`<circle cx="${x}" cy="203" r="3" fill="${i%2?'var(--c-a)':'#fff'}" style="animation-delay:${i*.12}s"/>`).join('')}</g></svg>
+      <div class="reveal" aria-hidden="true"><div class="beam2" id="rBeam"></div><div class="glow" id="rGlow"></div><div class="flash" id="rFlash"></div>
+        <svg class="cap" id="rCap" viewBox="0 0 150 150">${capsuleSVG()}</svg><div class="rchar" id="rChar">${toySVG(S)}</div></div>
+    </div>
+    <div class="center"><button class="btn" id="spin">轉動扭蛋機</button></div>`);
+  $('#spin').onclick=spin;
+}
+function spin(){
+  const b=$('#spin'); b.disabled=true;
+  if(!hasG()){ renderResult(); return; }
+  const tl=gsap.timeline({onComplete:()=>setTimeout(renderResult, 900)});
+  tl.to('#mKnob',{rotation:720,svgOrigin:'84 276',duration:1.3,ease:'power2.inOut'})
+    .to('#mCaps',{x:'random(-4,4)',y:'random(-3,3)',duration:.08,repeat:13,yoyo:true,ease:'none'},0)
+    .to('#machine',{y:4,duration:.05,repeat:9,yoyo:true},.9)
+    .to('#machine',{scale:.6,opacity:0,y:40,duration:.45,ease:'power2.in'},'+=.1')
+    .fromTo('#rCap',{opacity:1,scale:.2,y:160,rotation:-90},{scale:1,y:0,rotation:0,duration:.7,ease:'back.out(1.6)'},'-=.15')
+    .to('#rCap',{rotation:9,duration:.09,repeat:5,yoyo:true,ease:'sine.inOut'})
+    .to('#rCap',{rotation:0,duration:.1})
+    .to('#rBeam',{opacity:1,duration:.2})
+    .to('#rFlash',{opacity:1,scale:9,duration:.35,ease:'power2.out'},'<')
+    .to('#capTop',{y:-90,rotation:-25,svgOrigin:'75 75',opacity:0,duration:.55,ease:'power2.out'},'<')
+    .to('#capBot',{y:90,opacity:0,duration:.55,ease:'power2.out'},'<')
+    .to('#rGlow',{opacity:.85,duration:.5},'<')
+    .to('#rFlash',{opacity:0,duration:.4},'<.15')
+    .to('#rBeam',{opacity:0,duration:.8},'<.2')
+    .fromTo('#rChar',{opacity:1,scale:0},{scale:1,duration:.75,ease:'elastic.out(1,0.55)'},'<-.6')
+    .add(burst,'<');
+}
+function burst(){
+  const st=document.querySelector('.reveal'); const cs=['#fff','var(--c-a)','var(--c-b)'];
+  for(let i=0;i<14;i++){
+    const s=document.createElementNS('http://www.w3.org/2000/svg','svg'); s.setAttribute('viewBox','-10 -10 20 20'); s.classList.add('spark');
+    s.innerHTML=`<path d="M0 -9 L2.2 -2.2 L9 0 L2.2 2.2 L0 9 L-2.2 2.2 L-9 0 L-2.2 -2.2Z" fill="${cs[i%3]}"/>`; st.appendChild(s);
+    const a=(i/14)*Math.PI*2, d=120+Math.random()*50;
+    gsap.fromTo(s,{opacity:1,x:0,y:0,scale:.4},{x:Math.cos(a)*d,y:Math.sin(a)*d,scale:1.1,rotation:180,opacity:0,duration:1.2,ease:'power2.out'});
+  }
+}
+
+/* ================= RESULT (簡易報告) ================= */
+function shareURL(){
+  const {code}=typeCode();
+  const p=new URLSearchParams({t:code, a:S.animal, c:S.color});
+  if(S.fruit) p.set('fr',S.fruit); if(S.aOther) p.set('ao',S.aOther); if(S.fOther) p.set('fo',S.fOther); if(S.name) p.set('n',S.name);
+  return location.origin + location.pathname + '?' + p.toString();
+}
+function teamBlock(code){
+  const f=S.friend; if(!f) return '';
+  const fc=f.type; let score=60; const lines=[];
+  if(fc[0]===code[0]){ score+=15; lines.push('你們想要的東西很接近，聊起未來特別有共鳴。'); } else lines.push('你們在意的東西不同，剛好能幫對方看見另一種可能。');
+  if(fc[2]!==code[2]){ score+=10; lines.push('一個用腦、一個用心，做決定時能互相補位。'); } else lines.push('你們做決定的方式很像，討論很快有共識，但也要小心一起忽略同一個盲點。');
+  if(fc[3]!==code[3]){ score+=10; lines.push('一個先想、一個先做，合作時一個負責規劃，一個負責開局。'); } else lines.push('你們的節奏一致，一起做事很順。');
+  if(fc[1]===code[1]){ score+=5; } else lines.push('面對變化，一個踩油門、一個踩煞車，記得先說好要往哪裡開。');
+  const fname=esc(f.name||'你的朋友');
+  return `<div class="section"><h4>組隊默契</h4><div class="team">
+    <div style="display:flex;align-items:center;gap:12px"><div class="toy" style="width:64px;height:64px">${toySVG(f)}</div><div style="font-size:22px;color:var(--ink-3)">×</div><div class="toy" style="width:64px;height:64px">${toySVG(S)}</div>
+    <div style="margin-left:auto;text-align:right"><div class="score">${score}%</div><div style="font-size:12px;color:var(--ink-3)">你和${fname}</div></div></div>
+    <p style="margin:12px 0 0;font-size:15px;line-height:1.8">${lines.join('<br>')}</p></div></div>`;
+}
+function shareBtns(prefix){ return `<div class="share">
+      <a class="sh" id="${prefix}Line" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="#06C755"><path d="M12 3C6.5 3 2 6.6 2 11c0 3.9 3.5 7.2 8.3 7.9.3.1.8.2.9.5.1.3.1.7 0 1l-.1.9c0 .3-.2 1 .9.5s5.9-3.5 8-6C21.4 14.3 22 12.7 22 11c0-4.4-4.5-8-10-8z"/></svg>LINE</a>
+      <a class="sh" id="${prefix}Fb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="#4B8BFF"><path d="M14 8.5V6.8c0-.8.5-1 .9-1H17V2.1L14.2 2C11 2 10.4 4.4 10.4 6v2.5H8V12h2.4v10H14V12h2.7l.4-3.5H14z"/></svg>臉書</a>
+      <button class="sh" id="${prefix}Ig"><svg viewBox="0 0 24 24" fill="none" stroke="#FF6FB5" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#FF6FB5"/></svg>IG 限動</button></div>`; }
+function bindShare(prefix, text){
+  const url=shareURL();
+  $('#'+prefix+'Fb').href='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(url);
+  $('#'+prefix+'Line').href='https://social-plugins.line.me/lineit/share?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(text);
+  $('#'+prefix+'Fb').onclick=$('#'+prefix+'Line').onclick=()=>record('share',{where:prefix});
+  $('#'+prefix+'Ig').onclick=()=>shareStory(prefix);
+  storyFile(); // 先在背景把限動圖畫好，按下去才能立刻叫出分享選單
+}
+
+/* ---------- IG 限動圖（1080×1920） ---------- */
+const GAME_HOST = 'designthinking-powwow.github.io/dream-island'; // 換成短網址時改這裡
+let storyCache = null;
+function storyFile(){
+  const key = [S.animal,S.fruit,S.color,S.aOther,S.fOther,S.name].join('|');
+  if(storyCache && storyCache.key===key) return storyCache.p;
+  const p = drawStory().then(blob=>new File([blob],'dream-island.png',{type:'image/png'}));
+  storyCache = {key, p};
+  return p;
+}
+async function drawStory(){
+  const W=1080, H=1920, cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+  const g=cv.getContext('2d');
+  const col=COLORS.find(c=>c.id===S.color)||COLORS[0];
+  const {code}=typeCode(); const T=TYPES[code];
+  const quote = typeOf(code).line;
+  try{ await Promise.all([document.fonts.load('900 80px "Noto Sans TC"'),document.fonts.load('500 40px "Noto Sans TC"')]); }catch(e){}
+  const F='"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif';
+  // 背景
+  g.fillStyle='#141218'; g.fillRect(0,0,W,H);
+  let rg=g.createRadialGradient(W/2,820,40,W/2,820,760); rg.addColorStop(0,col.a+'88'); rg.addColorStop(.55,col.b+'33'); rg.addColorStop(1,'#14121800');
+  g.fillStyle=rg; g.fillRect(0,0,W,H);
+  rg=g.createRadialGradient(W/2,0,0,W/2,0,700); rg.addColorStop(0,'rgba(255,255,255,.10)'); rg.addColorStop(1,'rgba(255,255,255,0)');
+  g.fillStyle=rg; g.fillRect(0,0,W,H);
+  // 頂部
+  g.textBaseline='alphabetic'; g.textAlign='left'; g.fillStyle='#BDB7C9'; g.font=`700 38px ${F}`; g.fillText('夢遊扭蛋島',80,250);
+  g.textAlign='right'; g.fillStyle='#8C8699'; g.font=`500 34px ${F}`; g.fillText('夢境守護獸 No.'+S.serial,W-80,250);
+  // 底座
+  g.save(); g.translate(W/2,1145); g.scale(1,.2); g.beginPath(); g.arc(0,0,330,0,Math.PI*2); g.restore();
+  const pg=g.createLinearGradient(W/2-330,0,W/2+330,0); pg.addColorStop(0,col.a); pg.addColorStop(1,col.b);
+  g.fillStyle='rgba(0,0,0,.35)'; g.fill(); g.lineWidth=4; g.strokeStyle=pg; g.stroke();
+  // 守護獸
+  const svg=toySVG(S).replace('<svg ','<svg width="1000" height="1000" ');
+  const url=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'}));
+  const img=await new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=url; });
+  g.drawImage(img,(W-780)/2,380,780,780); URL.revokeObjectURL(url);
+  // 名字、稱號
+  g.textAlign='center'; g.fillStyle='#F5F3F8'; g.font=`900 76px ${F}`; g.fillText(dispName(),W/2,1290);
+  const tg=g.createLinearGradient(W/2-260,0,W/2+260,0); tg.addColorStop(0,col.a); tg.addColorStop(1,col.b);
+  g.fillStyle=tg; g.font=`900 58px ${F}`; g.fillText(T.name,W/2,1380);
+  // 台詞（逐字換行）
+  g.fillStyle='#F5F3F8'; g.font=`500 42px ${F}`;
+  const lines=[]; let cur='';
+  for(const ch of '「'+quote+'」'){ if(g.measureText(cur+ch).width>820){ lines.push(cur); cur=ch; } else cur+=ch; }
+  lines.push(cur); lines.slice(0,3).forEach((l,i)=>g.fillText(l,W/2,1480+i*62));
+  // 底部邀請
+  g.fillStyle='#F5F3F8'; g.font=`900 54px ${F}`; g.fillText('你心裡住的是哪一隻？',W/2,1690);
+  g.fillStyle='#BDB7C9'; g.font=`500 32px ${F}`; g.fillText(GAME_HOST,W/2,1750);
+  return await new Promise(res=>cv.toBlob(res,'image/png'));
+}
+async function shareStory(prefix){
+  record('share',{where:prefix+'Ig'});
+  let file;
+  try{ file=await storyFile(); }catch(e){ toast('限動圖產生失敗，請再試一次。'); storyCache=null; return; }
+  if(navigator.canShare && navigator.canShare({files:[file]})){
+    try{ await navigator.share({files:[file]}); return; }
+    catch(e){ if(e && e.name==='AbortError') return; }
+  }
+  const u=URL.createObjectURL(file);
+  modal(`<p style="margin:0 0 10px;color:var(--ink)"><b>你的限動圖做好了</b></p>
+    <img src="${u}" alt="限動圖" style="max-width:100%;max-height:60vh;border-radius:14px;display:block;margin:0 auto">
+    <p style="margin:10px 0 0;font-size:13px">手機：長按圖片儲存，再到 IG 發限動。<br>電腦：<a href="${u}" download="dream-island.png">下載圖片</a></p>`);
+}
+function confetti(){
+  const cs=['#FF5FD2','#3DF5D0','#F2FF4D','#8B5CFF','#FF9A3D','#fff'];
+  for(let i=0;i<40;i++){ const d=document.createElement('div'); d.className='conf'; d.style.background=cs[i%cs.length];
+    d.style.left='50%'; d.style.top='22%'; document.body.appendChild(d);
+    gsap.to(d,{x:(Math.random()-.5)*420,y:200+Math.random()*420,rotation:Math.random()*720,opacity:0,duration:1.6+Math.random(),ease:'power2.out',onComplete:()=>d.remove()}); }
+}
+
+function holo(card){
+  if(!card||reduce) return;
+  const set=(x,y)=>{ const r=card.getBoundingClientRect(); const px=(x-r.left)/r.width, py=(y-r.top)/r.height;
+    card.style.setProperty('--mx',(px*100)+'%'); card.style.setProperty('--my',(py*100)+'%');
+    card.style.setProperty('--ry',((px-.5)*14)+'deg'); card.style.setProperty('--rx',((.5-py)*14)+'deg'); };
+  card.addEventListener('pointermove',e=>set(e.clientX,e.clientY));
+  card.addEventListener('pointerleave',()=>{ card.style.setProperty('--rx','0deg'); card.style.setProperty('--ry','0deg'); });
+}
+
+/* ================= QUESTIONS（10 題，全部單選、自動跳題） ================= */
+const hist=[];
+function qIndex(){ return S.q1? (S.main? 2+DIM_ORDER.filter(q=>S.answers[q]).length : 1) : 0; }
+function snap(){ hist.push(JSON.stringify({q1:S.q1,route:S.route,pains:S.pains,main:S.main,answers:S.answers})); }
+function goBack(){ if(!hist.length) return; Object.assign(S, JSON.parse(hist.pop())); renderForest(); }
+const FOREST_LINES = {q1:'先說說你現在的位置。', q2:'最近最讓你嘆氣的，是哪一件？', q4:'接下來 8 題，選最像你最近的就好。', q8:'你答得很誠實。再四題就好。', q11:'最後一題了。'};
+function renderForest(){
+  const i=qIndex();
+  if(i>=TOTAL_Q){ setZone(3); renderGacha(); return; }
+  const id=QUESTIONS[i];
+  const line = FOREST_LINES[id] || '選最像你最近的那一個。';
+  const head = `<div class="qprog"><span style="width:${(i/TOTAL_Q)*100}%"></span></div>
+    <div class="qcomp"><div class="toy" id="comp">${toySVG(S)}</div><div class="bubble">${line}</div></div>`;
+  const top = `<div class="qtop"><span class="qcount">第 ${i+1}／${TOTAL_Q} 題</span>${hist.length?`<button class="linkbtn backq" id="backq">← 上一題</button>`:''}</div>`;
+  if(id==='q1') qSingle(head, top, Q1.prompt, Q1.options.map(o=>o.label), k=>{ S.q1=Q1.options[k].id; S.route=Q1.options[k].route; });
+  else if(id==='q2'){ const keys=Q2_BY_ROUTE[S.route];
+    qSingle(head, top, '最近最讓你嘆氣的事是？', keys.map(k=>PAINS[k].label), k=>{ S.main=keys[k]; S.pains=[keys[k]]; }); }
+  else { const Q=DIMQ[id]; const prompt = typeof Q.prompt==='string' ? Q.prompt : (Q.prompt[S.route]||Q.prompt.worker);
+    qSingle(head, top, prompt, Q.options.map(o=>o.label), k=>{ S.answers[id]={i:k, v:Q.options[k].v, w:Q.options[k].w}; }); }
+  const b=$('#backq'); if(b) b.onclick=goBack;
+}
+function nod(){ pulse($('#comp'),'nod'); }
+function qSingle(head, top, prompt, labels, onPick){
+  render(`${head}<div class="qcard">${top}<h2>${prompt}</h2>
+    <div class="choices" id="ch">${labels.map((l,i)=>`<button class="choice" data-i="${i}" aria-pressed="false">${l}</button>`).join('')}</div></div>`);
+  let done=false;
+  $('#ch').onclick=e=>{
+    const b=e.target.closest('[data-i]'); if(!b||done) return; done=true;
+    b.setAttribute('aria-pressed','true'); pulse(b,'jelly'); nod();
+    snap(); onPick(+b.dataset.i);
+    setTimeout(renderForest, reduce?0:380);
+  };
+}
+
+/* ================= SCORING ================= */
+function typeCode(){
+  const A=S.answers; let code=''; const conf=[];
+  for(let i=0;i<4;i++){ const [p0,p1]=DIM_PAIRS[i]; const a=A[p0], b=A[p1];
+    if(a.v===b.v){ code+=a.v; conf.push(true); }
+    else { code += (a.w>b.w ? a.v : b.v); conf.push(false); } }
+  return {code, conf};
+}
+function stuckKey(){ return PAINS[S.main].stuck; }
+function partnerCode(code){ const f={L:'I',I:'L',P:'D',D:'P'}; return code[0]+code[1]+f[code[2]]+f[code[3]]; }
+function dimWords(code){ return code.split('').map((c,i)=>DIM_WORDS[i][c]).join('・'); }
+function courseLink(where){ if(COURSE_URL==='#') return '#'; const u=new URL(COURSE_URL); u.searchParams.set('utm_source','dream-island'); u.searchParams.set('utm_medium','game'); u.searchParams.set('utm_campaign','course-1101'); u.searchParams.set('utm_content',stuckKey()+'-'+where); return u.toString(); }
+function bindCourse(sel, where){ const a=$(sel); if(!a) return; a.href=courseLink(where);
+  a.onclick=()=>{ record('course_click',{from:where, stuck:stuckKey()}); if(COURSE_URL==='#'){ toast('課程 11/01 上線，報名頁開放後這裡就能點進去。'); return false; } }; }
+const DISCLAIMER = `<p class="disc">這個小遊戲參考了價值觀、決策風格與生涯適應力等心理學研究來設計，只是幫你換個角度認識自己的起點，不是診斷或人格測驗。</p>`;
+function courseBlock(where){
+  const s=stuckKey(), E=EPISODES[s]; if(!E) return '';
+  return `<div class="section"><h4>想更了解自己？</h4><div class="course">
+    <p style="margin:0 0 10px">這座島只是一個開始。如果你想更深地認識自己、慢慢畫出屬於你的人生藍圖，我們有一門線上課程：</p>
+    <p class="cname">${COURSE_NAME}</p>
+    <p class="soft">八集，每集都有一份小練習。你最近在想的「${STUCK[s].name}」，會在第 ${E.ep} 集「${E.title}」裡好好練習到。</p>
+    <a class="btn wide" id="c_${where}" target="_blank" rel="noopener" style="text-decoration:none;margin-top:4px">看看這門課</a>
+    <details class="notfor"><summary>課程小資訊</summary><ul>
+      <li>全課 8 集，每集 15 到 20 分鐘，每集都有一份工作單。</li>
+      <li>講師查查 2016 年自費到史丹佛大學 d.school 進修，帶過超過 300 場設計思考工作坊。</li>
+      <li>上線有早鳥優惠，以課程頁公告為準。</li>
+      <li>${NOT_FOR[0]}</li></ul></details>
+  </div></div>`;
+}
+
+/* ================= RESULT（結果＋簡易報告，一頁讀到底） ================= */
+function renderResult(){
+  setZone(3);
+  const {code, conf}=typeCode(); const T=typeOf(code); const s=stuckKey();
+  const rare = (S.animal==='other'||S.fruit==='other');
+  const softDims = conf.map((c,i)=>c?null:i).filter(x=>x!==null);
+  const both = softDims.length ? `<p class="soft">另外，你在「${softDims.map(i=>Object.values(DIM_WORDS[i]).join('和')).join('」「')}」之間兩邊都有，只是比較偏向${softDims.map(i=>DIM_WORDS[i][code[i]]).join('、')}。</p>` : '';
+  const peek = T.seen.length>34 ? T.seen.slice(0,34)+'……' : T.seen;
+  const cross = CROSS[s] && CROSS[s][code[3]];
+  const stuckHTML = s==='explore'
+    ? `<p>你說最近其實還好，只是想多了解自己。${STUCK[s].note}</p>${cross?`<p>${cross}</p>`:''}`
+    : `<p>你說最近最常讓你嘆氣的是「${esc(PAINS[S.main].label)}」。${STUCK[s].note}</p>${cross?`<p>${cross}</p>`:''}`;
+  render(`
+    <div class="card" id="card"><div class="card-in">
+      <div class="card-top"><span>夢境守護獸</span><b>No.${S.serial}</b></div>
+      ${stageHTML('ctoy')}
+      <div class="card-body">
+        <h3>${esc(dispName())}${rare?'<span class="rare">限定款</span>':''}</h3>
+        <div class="title">${T.name}</div>
+        <p class="quote">「${T.line}」</p>
+      </div>
+      <div class="mark"><span>以設計思考設計的<br>人生探索遊戲</span><b>Design Thinking<br>POW WOW</b></div>
+    </div></div>
+    ${shareBtns('r')}
+    <button class="more" id="more">牠還有話想跟你說<span>往下看 ↓</span></button>
+    <p class="peek">${peek}</p>
+    <div class="section" id="who"><h4>你是誰</h4><h3>你是${T.name}</h3>
+      <p class="soft" style="font-size:13px;margin-top:-6px">${dimWords(code)}</p>
+      <p><b class="lbl">別人眼中的你</b>${T.seen}</p>
+      <p><b class="lbl">只有你自己知道的</b>${T.secret}</p>
+      <p><b class="lbl">你可能有過這種時刻</b>${T.moment}</p>${both}
+      <div class="light"><b class="lbl">你身上的光</b>${T.light}</div></div>
+    <div class="section"><h4>你最近在想的事</h4>${stuckHTML}</div>
+    <div class="section"><h4>你的三個天生優勢</h4><div class="strengths">${T.str.map(x=>`<div><b>${x[0]}</b><span>${x[1]}</span></div>`).join('')}</div></div>
+    ${teamBlock(code)}
+    ${courseBlock('result')}
+    <div class="section"><div class="gift">
+      <div class="gift-tag">🎁 完整報告書</div>
+      <h3>${esc(petName())}還有幾句話，想私下跟你說</h3>
+      <ul><li>你在工作中、在人際中、壓力來時的樣子</li><li>你常對自己說的那句話，和換個方式說的版本</li><li>你的最佳冒險夥伴</li><li>三個本週就能做的小任務</li><li>課程第一集的四個小問題，先免費寫寫看</li></ul>
+      <button class="btn wide" id="unlock">領取完整報告書</button>
+      <p style="font-size:13px;margin:10px 0 0;color:#7B7383">只需要 Email，報告書會顯示在下一頁，也會寄一份給你保存。</p></div></div>
+    <div class="section center"><h4>這份結果，像你嗎？（選填）</h4>
+      <div class="stars" id="stars">${[1,2,3,4,5].map(n=>`<button aria-label="${n} 顆星" data-n="${n}">★</button>`).join('')}</div></div>
+    <p class="note">這個遊戲由線上課程${COURSE_NAME}的團隊設計。</p>
+    ${DISCLAIMER}`);
+  holo($('#card'));
+  bindShare('r', `我在夢遊扭蛋島轉出了「${dispName()}」，稱號是${T.name}：「${T.line}」你心裡住的是哪一隻？`);
+  $('#more').onclick=()=>$('#who').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});
+  bindCourse('#c_result','result');
+  $('#unlock').onclick=()=>{ setZone(-1); renderForm(); };
+  $('#stars').onclick=e=>{ const b=e.target.closest('[data-n]'); if(!b) return; S.rating=+b.dataset.n;
+    $$('#stars button').forEach(x=>x.classList.toggle('on', +x.dataset.n<=S.rating)); pulse(b,'jelly');
+    record('rating',{rating:S.rating, code}); toast('謝謝你的回饋。'); };
+  if(hasG()){ gsap.from('#card',{y:30,opacity:0,rotation:-3,duration:.7,ease:'back.out(1.5)'}); confetti(); }
+}
+
+/* ================= FORM ================= */
+const INDUSTRIES=['科技資訊','金融保險','製造業','零售服務','餐飲旅宿','醫療照護','教育','設計創意','媒體行銷','公部門','自由工作者','創業／自營','其他'];
+const AGES=['18–21 歲','22–25 歲','26–30 歲','31–35 歲','36–39 歲','40 歲以上'];
+function renderForm(){
+  const student=S.route==='student';
+  render(`
+    <div class="qcomp"><div class="toy" id="comp">${toySVG(S)}</div><div class="bubble">${esc(petName())}把你的報告書帶回來了，就差最後一步。</div></div>
+    <h2>留下 Email，領取完整報告書</h2>
+    <p class="hint" style="line-height:1.7">報告書會直接顯示在下一頁，也會寄一份到你的信箱保存。</p>
+    <div class="form">
+      <label>Email<input class="field" id="em" type="email" autocomplete="email" placeholder="you@example.com"></label>
+      <label>年齡 <small>選填</small><select class="field" id="age"><option value="">請選擇</option>${AGES.map(a=>`<option>${a}</option>`).join('')}</select></label>
+      ${student?'':`<label>產業 <small>選填，報告裡的小任務會更貼近你的日常</small><select class="field" id="ind"><option value="">請選擇</option>${INDUSTRIES.map(a=>`<option>${a}</option>`).join('')}</select></label>`}
+      <label class="check"><input type="checkbox" id="c1"><span>我已閱讀並同意<button class="linkbtn" id="pv" type="button" style="font-size:14px;padding:0">個資告知事項</button>。（必勾）</span></label>
+      <label class="check"><input type="checkbox" id="c2"><span>我願意收到課程、活動與《未來思考週報》。（選勾）</span></label>
+      <label class="check"><input type="checkbox" id="c3"><span>我同意作答內容以去識別化方式用於研究統計。（選勾）</span></label>
+      <input type="text" id="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+      <div class="err" id="err"></div>
+      <button class="btn wide" id="go">領取我的完整報告書</button>
+      <p class="fine" style="margin-top:0">報告信由 ${CONTACT} 寄出，偶爾會跑進垃圾信件匣或「促銷內容」，沒看到記得找一下。</p>
+    </div>`);
+  $('#pv').onclick=e=>{ e.preventDefault(); modal(PRIVACY_NOTE); };
+  $('#go').onclick=()=>{
+    const em=$('#em').value.trim();
+    const err=[];
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) err.push('請填寫正確的 Email');
+    if(!$('#c1').checked) err.push('請勾選同意個資告知事項');
+    if(err.length){ $('#err').textContent=err.join('、')+'。'; return; }
+    S.form={email:em, age:$('#age').value, industry:student?'在學':($('#ind')?$('#ind').value:''), marketing:$('#c2').checked, research:$('#c3').checked};
+    // 名單只帶分眾用的欄位；不帶場次編號，和匿名作答分開
+    record('unlock',{email:em, marketing:S.form.marketing, research:S.form.research, age:S.form.age, industry:S.form.industry,
+      code:typeCode().code, stuck:stuckKey(), q1:S.q1, pet:petName(), hp:$('#hp').value, r:reportToken()});
+    renderReport();
+  };
+}
+
+/* ================= REPORT（完整報告書） ================= */
+function renderReport(){
+  const {code}=typeCode(); const T=typeOf(code); const s=stuckKey();
+  const pc=partnerCode(code), P=typeOf(pc);
+  const name=esc(petName());
+  const ctx = S.route==='student' ? '可以直接放進你的校園生活。' : (S.form.industry&&S.form.industry!=='其他' ? `可以直接套進你在「${esc(S.form.industry)}」的日常。` : '可以直接放進你這週的日常。');
+  const three = [['在工作中',T.work],['在人際中',T.people],['壓力來時',T.stress]].filter(x=>x[1]);
+  render(`<div class="paper"><div class="cover"><div class="cover-top"><span>夢遊扭蛋島・完整報告書</span><b>No.${S.serial}</b></div><div class="cover-toy">${toySVG(S)}</div><h2 class="center" style="margin:4px 0 0">${esc(dispName())}</h2><p class="center" style="color:var(--ink-3);margin:2px 0 0;font-size:14px">${T.name}・${dimWords(code)}</p></div>
+    <p class="center" style="font-size:17px;margin:14px 0 0;line-height:1.7">${name}陪你走完了整座島，牠想私下跟你說幾句話。</p>
+
+    ${three.length?`<div class="section"><h4>一・你在不同時候的樣子</h4>${three.map(([k,v])=>`<p><b class="lbl">${k}</b>${v}</p>`).join('')}</div>`:''}
+
+    <div class="section"><h4>${three.length?'二':'一'}・你常對自己說的那句話</h4>
+      ${T.stuck?`<p>${T.stuck}</p>`:''}
+      <div class="voice"><p class="soft" style="font-size:14px">${T.name}常在心裡說：</p><p>「${T.voice}」</p><p class="soft" style="font-size:14px">可以試著換個方式說：</p><p>「${T.reframe}」</p></div></div>
+
+    <div class="section"><h4>你的最佳冒險夥伴</h4>
+      <div class="partner"><div class="badge">🤝</div><p><b>${P.name}</b><br>你們想要的東西很接近，但做決定和行動的方式剛好互補。你身邊有這樣的人嗎？邀他來島上測測看。</p></div>
+      <div class="share" style="margin-top:10px;grid-template-columns:1fr 1fr">
+        <a class="sh" id="pLine" target="_blank" rel="noopener">用 LINE 邀他</a><a class="sh" id="pFb" target="_blank" rel="noopener">分享到臉書</a></div></div>
+
+    <div class="section"><h4>三個本週就能做的小任務</h4>
+      <p class="soft">你最想先從哪裡開始？選一個，${ctx}每個任務 15 分鐘內做得到。</p>
+      <div class="choices" id="och">${ORCHARD.map((o,i)=>`<button class="choice" data-i="${i}" aria-pressed="${S.orchard===o.id}">${o.label}</button>`).join('')}</div>
+      <ol class="tasks" id="tasks" style="margin-top:12px"></ol></div>
+
+    <div class="section"><h4>先免費寫寫看：課程第一集的四個小問題</h4>
+      <p class="soft">不用想太多，寫下你現在真實的想法就好。寫在紙上或手機備忘錄都可以。</p>
+      <ol class="ep1">${EP1_SENTENCES.map(t=>`<li>${t}</li>`).join('')}</ol>
+      <p class="soft">第四句很多人會停很久。那個「因為」後面接的東西，往往就是一條重要的線索。寫完把它留著，如果你走進這門課，第八集會用到它。</p></div>
+    ${courseBlock('report')}
+    <div class="light" style="margin-top:26px"><b class="lbl">最後，${name}想跟你說</b>${T.light}</div>
+    <p class="center" style="font-size:16px;margin:22px 0 0;line-height:1.7">${name}會在島上等你。下次回來，跟牠說說你完成了哪一個小任務。</p>
+    ${DISCLAIMER}
+    </div>
+    <button class="btn wide" id="send" style="margin-top:20px">完成</button>`);
+  const showTasks=()=>{ const o=ORCHARD.find(o=>o.id===S.orchard); $('#tasks').innerHTML=o?o.tasks.map(t=>`<li>${t}</li>`).join(''):''; };
+  showTasks();
+  $('#och').onclick=e=>{ const b=e.target.closest('[data-i]'); if(!b) return; S.orchard=ORCHARD[+b.dataset.i].id;
+    $$('#och .choice').forEach(x=>x.setAttribute('aria-pressed', x===b)); pulse(b,'jelly'); showTasks(); record('orchard',{orchard:S.orchard, code}); };
+  const url=shareURL(); const text=`我在夢遊扭蛋島是${T.name}，系統說我的最佳夥伴是${P.name}。你來測測看是不是你？`;
+  $('#pLine').href='https://social-plugins.line.me/lineit/share?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(text);
+  $('#pFb').href='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(url);
+  bindCourse('#c_report','report');
+  $('#send').onclick=renderThanks;
+}
+
+/* ================= THANKS ================= */
+function renderThanks(){
+  const {code}=typeCode(); const T=typeOf(code); const s=stuckKey();
+  render(`${stageHTML('ttoy')}
+    <h2 class="center" style="margin-top:22px">謝謝你來島上走一趟。</h2>
+    ${S.restored?'':`<div class="wish" style="margin-top:14px;text-align:center">📮 報告書會寄到 <b>${esc(S.form.email)}</b><br>沒看到的話，找一下<b>垃圾信件匣</b>或「促銷內容」，<br>順手標成「不是垃圾郵件」，之後島上的信就不會迷路。</div>`}
+    <div class="section"><div class="course">
+      <h3 style="font-size:19px;margin-bottom:8px">想更了解自己嗎？</h3>
+      <p>${esc(petName())}只陪你走了一小段。如果你想更深地認識自己、畫出屬於你的人生藍圖，歡迎來看看我們的線上課程${COURSE_NAME}。</p>
+      <a class="btn wide" id="c_thanks" target="_blank" rel="noopener" style="text-decoration:none">看看這門課</a>
+    </div></div>
+    <div class="section center"><p class="soft" style="color:var(--ink-2)">把島分享給一個最近也在嘆氣的朋友：</p>
+      <div class="share"><a class="sh" id="tLine" target="_blank" rel="noopener">LINE</a><a class="sh" id="tFb" target="_blank" rel="noopener">臉書</a><button class="sh" id="again">重玩一次</button></div></div>
+    ${DISCLAIMER}`);
+  const url=shareURL(); const text=`我在夢遊扭蛋島轉出了「${dispName()}」，稱號是${T.name}。你心裡住的是哪一隻？`;
+  $('#tLine').href='https://social-plugins.line.me/lineit/share?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(text);
+  $('#tFb').href='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(url);
+  bindCourse('#c_thanks','thanks');
+  $('#again').onclick=()=>{ location.href=location.origin+location.pathname; };
+}
+
+/* ================= BOOT ================= */
+applyColor();
+(function boot(){
+  const tok=new URLSearchParams(location.search).get('r');
+  if(tok && restoreReport(tok)){ applyColor(); renderReport(); return; }
+  renderIntro();
+})();
+
+</script>
+</body>
+</html>
