@@ -1342,7 +1342,7 @@ function renderForm(){
       <input type="text" id="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
       <div class="err" id="err"></div>
       <button class="btn wide" id="go">領取我的完整報告書</button>
-      <p class="fine" style="margin-top:0">不會公開你的個人資料，也不會轉給第三方。</p>
+      <p class="fine" style="margin-top:0">報告信由 dreamisland.chacha@gmail.com 寄出，偶爾會跑進垃圾信件匣或「促銷內容」，沒看到記得找一下。不會公開你的個人資料，也不會轉給第三方。</p>
     </div>`);
   $('#pv').onclick=e=>{ e.preventDefault(); modal(PRIVACY_NOTE); };
   $('#chest').onclick=e=>{ const b=e.target.closest('.chip'); if(!b) return; const v=b.textContent;
@@ -1451,6 +1451,7 @@ function renderThanks(){
   const {code}=typeCode(); const T=TYPES[code]; const {main}=stuckKeys();
   render(`${stageHTML('ttoy')}
     <h2 class="center" style="margin-top:22px">謝謝你來島上走一趟。</h2>
+    ${S.restored?'':`<div class="wish" style="margin-top:14px;text-align:center">📮 報告書會寄到 <b>${esc(S.form.email)}</b><br>沒看到的話，找一下<b>垃圾信件匣</b>或「促銷內容」，<br>順手標成「不是垃圾郵件」，之後島上的信就不會迷路。</div>`}
     <div class="section"><div class="course">
       <h3 style="font-size:19px;margin-bottom:8px">給${T.name}・${esc(petName())}的下一步</h3>
       ${main==='explore' ? `<p>你現在的狀態不錯，正適合好好想想下一步要往哪裡長。` : `<p>你的卡點是「${STUCK[main].name}」。`}如果你想有人陪你把它慢慢拆開，${COURSE_NAME}會從第一集開始，一步一步帶你走。</p>
