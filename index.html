@@ -5,7 +5,16 @@
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>夢遊扭蛋島｜以設計思考設計的人生探索遊戲</title>
-<meta name="description" content="週日晚上睡不著的人，都會掉到這座島。約 4 分鐘，看看你心裡住著哪一隻守護獸。">
+<meta name="description" content="心裡有點悶、又說不出為什麼的人，都會掉到這座島。約 4 分鐘，看看你心裡住著哪一隻守護獸。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://designthinking-powwow.github.io/dream-island/">
+<meta property="og:title" content="夢遊扭蛋島｜你心裡住著哪一隻守護獸？">
+<meta property="og:description" content="心裡有點悶、又說不出為什麼的人，都會掉到這座島。約 4 分鐘，免註冊。">
+<meta property="og:image" content="https://designthinking-powwow.github.io/dream-island/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="zh_TW">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -81,7 +90,7 @@ a{color:inherit}
 @keyframes morph{0%{transform:scale(.7,1.2)}100%{transform:none}}
 
 /* typography / buttons */
-h1.hero{font-size:44px;font-weight:900;line-height:1.12;letter-spacing:-.01em;margin:22px 0 12px}
+h1.hero{font-size:clamp(30px, calc((100vw - 40px) / 8.4), 44px);font-weight:900;line-height:1.12;letter-spacing:-.01em;margin:22px 0 12px}
 .lead{font-size:17px;line-height:1.75;color:var(--ink-2);margin:0 0 26px;max-width:21em}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;border:0;border-radius:16px;padding:16px 26px;font-size:17px;font-weight:700;color:#141218;background:var(--ink);
   box-shadow:0 0 0 1px rgba(255,255,255,.2) inset, 0 10px 30px color-mix(in srgb,var(--c-a) 30%,transparent);transition:transform .15s ease, box-shadow .2s ease, opacity .2s}
@@ -892,7 +901,7 @@ function renderIntro(){
     ${f ? friendBlock : `<div class="lineup">${[
       {animal:'capy',fruit:'lemon',color:'lime'},{animal:'frenchie',fruit:'tomato',color:'coral'},{animal:'cat',fruit:'grape',color:'pinkviolet'}
     ].map((st,i)=>`<div class="toy ${i===1?'mid':''}">${toySVG(st)}</div>`).join('')}</div><div class="shelf"></div>`}
-    <h1 class="hero">週日晚上<br>睡不著的人，<br>都會掉到<br>這座島。</h1>
+    <h1 class="hero">${heroLine()}</h1>
     <p class="lead">島中央有一台扭蛋機，裡面住著一隻跟你很像的守護獸。走完島上五個區域，牠會告訴你一些你心裡知道、卻一直沒說出口的事。</p>
     <button class="btn" id="go">${f?'我已滿 18 歲，看看我的':'我已滿 18 歲，進島'}</button>
     <div><button class="linkbtn" id="u18">未滿 18 歲？</button></div>
@@ -902,6 +911,17 @@ function renderIntro(){
   $('#go').onclick=()=>{ record('start',{friend:!!f}); S.step=0; renderCreate(); };
   $('#u18').onclick=renderUnder18;
   $('#pv').onclick=()=>modal(PRIVACY_NOTE);
+}
+// 開場標題依玩的時間換（玩家手機的時間）
+function heroLine(){
+  const d=new Date(), day=d.getDay(), h=d.getHours();
+  const sunNight=(day===0&&h>=18)||(day===1&&h<4);
+  const weekdayNight=!sunNight&&((day>=1&&day<=5&&h>=18)||(day>=2&&day<=6&&h<4));
+  const weekdayDay=day>=1&&day<=5&&h>=4&&h<18;
+  if(sunNight) return '週日晚上<br>睡不著的人，<br>都會掉到<br>這座島。';
+  if(weekdayNight) return '下班後還在想<br>「這樣下去好嗎」<br>的人，都會掉到<br>這座島。';
+  if(weekdayDay) return '上班時偷偷想著<br>「我到底要什麼」<br>的人，都會掉到<br>這座島。';
+  return '放假也放不下<br>心裡那件事的人，<br>都會掉到<br>這座島。';
 }
 function aLabelOf(st){ return aLabel(st); }
 function fLabelOf(st){ return st.fruit?fLabel(st):''; }
