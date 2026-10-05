@@ -1231,7 +1231,72 @@ function bindShare(prefix, text){
   $('#'+prefix+'Fb').href='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(url);
   $('#'+prefix+'Line').href='https://social-plugins.line.me/lineit/share?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(text);
   $('#'+prefix+'Fb').onclick=$('#'+prefix+'Line').onclick=()=>record('share',{where:prefix});
-  $('#'+prefix+'Ig').onclick=()=>toast('正式版會產生一張 9:16 的角色限動圖，手機上可直接送進 IG 限動。');
+  $('#'+prefix+'Ig').onclick=()=>shareStory(prefix);
+  storyFile(); // 先在背景把限動圖畫好，按下去才能立刻叫出分享選單
+}
+
+/* ---------- IG 限動圖（1080×1920） ---------- */
+const GAME_HOST = 'designthinking-powwow.github.io/dream-island'; // 換成短網址時改這裡
+let storyCache = null;
+function storyFile(){
+  const key = [S.animal,S.fruit,S.color,S.aOther,S.fOther,S.name,S.useLake].join('|');
+  if(storyCache && storyCache.key===key) return storyCache.p;
+  const p = drawStory().then(blob=>new File([blob],'dream-island.png',{type:'image/png'}));
+  storyCache = {key, p};
+  return p;
+}
+async function drawStory(){
+  const W=1080, H=1920, cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+  const g=cv.getContext('2d');
+  const col=COLORS.find(c=>c.id===S.color)||COLORS[0];
+  const {code}=typeCode(); const T=TYPES[code];
+  const quote = S.useLake ? STUCK[S.lakeKey||stuckKeys().main].lake : T.line;
+  try{ await Promise.all([document.fonts.load('900 80px "Noto Sans TC"'),document.fonts.load('500 40px "Noto Sans TC"')]); }catch(e){}
+  const F='"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif';
+  // 背景
+  g.fillStyle='#141218'; g.fillRect(0,0,W,H);
+  let rg=g.createRadialGradient(W/2,820,40,W/2,820,760); rg.addColorStop(0,col.a+'88'); rg.addColorStop(.55,col.b+'33'); rg.addColorStop(1,'#14121800');
+  g.fillStyle=rg; g.fillRect(0,0,W,H);
+  rg=g.createRadialGradient(W/2,0,0,W/2,0,700); rg.addColorStop(0,'rgba(255,255,255,.10)'); rg.addColorStop(1,'rgba(255,255,255,0)');
+  g.fillStyle=rg; g.fillRect(0,0,W,H);
+  // 頂部
+  g.textBaseline='alphabetic'; g.textAlign='left'; g.fillStyle='#BDB7C9'; g.font=`700 38px ${F}`; g.fillText('夢遊扭蛋島',80,250);
+  g.textAlign='right'; g.fillStyle='#8C8699'; g.font=`500 34px ${F}`; g.fillText('夢境守護獸 No.'+S.serial,W-80,250);
+  // 底座
+  g.save(); g.translate(W/2,1145); g.scale(1,.2); g.beginPath(); g.arc(0,0,330,0,Math.PI*2); g.restore();
+  const pg=g.createLinearGradient(W/2-330,0,W/2+330,0); pg.addColorStop(0,col.a); pg.addColorStop(1,col.b);
+  g.fillStyle='rgba(0,0,0,.35)'; g.fill(); g.lineWidth=4; g.strokeStyle=pg; g.stroke();
+  // 守護獸
+  const svg=toySVG(S).replace('<svg ','<svg width="1000" height="1000" ');
+  const url=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'}));
+  const img=await new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=url; });
+  g.drawImage(img,(W-780)/2,380,780,780); URL.revokeObjectURL(url);
+  // 名字、稱號
+  g.textAlign='center'; g.fillStyle='#F5F3F8'; g.font=`900 76px ${F}`; g.fillText(dispName(),W/2,1290);
+  const tg=g.createLinearGradient(W/2-260,0,W/2+260,0); tg.addColorStop(0,col.a); tg.addColorStop(1,col.b);
+  g.fillStyle=tg; g.font=`900 58px ${F}`; g.fillText(T.name,W/2,1380);
+  // 台詞（逐字換行）
+  g.fillStyle='#F5F3F8'; g.font=`500 42px ${F}`;
+  const lines=[]; let cur='';
+  for(const ch of '「'+quote+'」'){ if(g.measureText(cur+ch).width>820){ lines.push(cur); cur=ch; } else cur+=ch; }
+  lines.push(cur); lines.slice(0,3).forEach((l,i)=>g.fillText(l,W/2,1480+i*62));
+  // 底部邀請
+  g.fillStyle='#F5F3F8'; g.font=`900 54px ${F}`; g.fillText('你心裡住的是哪一隻？',W/2,1690);
+  g.fillStyle='#BDB7C9'; g.font=`500 32px ${F}`; g.fillText(GAME_HOST,W/2,1750);
+  return await new Promise(res=>cv.toBlob(res,'image/png'));
+}
+async function shareStory(prefix){
+  record('share',{where:prefix+'Ig'});
+  let file;
+  try{ file=await storyFile(); }catch(e){ toast('限動圖產生失敗，請再試一次。'); storyCache=null; return; }
+  if(navigator.canShare && navigator.canShare({files:[file]})){
+    try{ await navigator.share({files:[file]}); return; }
+    catch(e){ if(e && e.name==='AbortError') return; }
+  }
+  const u=URL.createObjectURL(file);
+  modal(`<p style="margin:0 0 10px;color:var(--ink)"><b>你的限動圖做好了</b></p>
+    <img src="${u}" alt="限動圖" style="max-width:100%;max-height:60vh;border-radius:14px;display:block;margin:0 auto">
+    <p style="margin:10px 0 0;font-size:13px">手機：長按圖片儲存，再到 IG 發限動。<br>電腦：<a href="${u}" download="dream-island.png">下載圖片</a></p>`);
 }
 function renderResult(){
   setZone(3);
