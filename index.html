@@ -551,7 +551,7 @@ function capsuleSVG(){
 }
 /* ===================== CONTENT ===================== */
 const COURSE_NAME = '《別急著找答案，用設計思考，打造你自己的人生藍圖》';
-const COURSE_URL = '#'; // TODO: PressPlay 審核通過後，填入課程報名頁網址
+const COURSE_URL = 'https://www.pressplay.cc/link/s/37DF5A34'; // 10/14 扭蛋島專用短網址（已帶 utm_source=dream-island、utm_medium=game、utm_campaign=course1）
 const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwJ_2eDRfawGsz3twtwpWlyaqQlvry6iNZ2KBlvoJUpfZCrkMHkAdaCi37uKUJvHvk/exec'; // Apps Script（dreamisland.chacha@gmail.com 部署）
 const CONTACT = 'dreamisland.chacha@gmail.com';
 // 〔草稿・待查查確認；細節需律師確認〕個資告知事項
@@ -1272,7 +1272,7 @@ function typeCode(){
 function stuckKey(){ return PAINS[S.main].stuck; }
 function partnerCode(code){ const f={L:'I',I:'L',P:'D',D:'P'}; return code[0]+code[1]+f[code[2]]+f[code[3]]; }
 function dimWords(code){ return code.split('').map((c,i)=>DIM_WORDS[i][c]).join('・'); }
-function courseLink(where){ if(COURSE_URL==='#') return '#'; const u=new URL(COURSE_URL); u.searchParams.set('utm_source','dream-island'); u.searchParams.set('utm_medium','game'); u.searchParams.set('utm_campaign','course-1101'); u.searchParams.set('utm_content',stuckKey()+'-'+where); return u.toString(); }
+function courseLink(where){ if(COURSE_URL==='#') return '#'; const u=new URL(COURSE_URL); u.searchParams.set('utm_content',stuckKey()+'-'+where); return u.toString(); }
 function bindCourse(sel, where){ const a=$(sel); if(!a) return; a.href=courseLink(where);
   a.onclick=()=>{ record('course_click',{from:where, stuck:stuckKey()}); if(COURSE_URL==='#'){ toast('課程 11/01 上線，報名頁開放後這裡就能點進去。'); return false; } }; }
 const DISCLAIMER = `<p class="disc">這個小遊戲參考了價值觀、決策風格與生涯適應力等心理學研究來設計，只是幫你換個角度認識自己的起點，不是診斷或人格測驗。</p>`;
