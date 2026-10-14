@@ -101,7 +101,7 @@ h1.hero{font-size:clamp(30px, calc((100vw - 40px) / 8.4), 44px);font-weight:900;
 .btn.wide{width:100%}
 .ghost{border:1px solid var(--line-2);background:transparent;border-radius:16px;padding:14px 20px;font-size:16px;color:var(--ink-2)}
 .ghost:hover{border-color:var(--ink-2);color:var(--ink)}
-.linkbtn{background:none;border:0;color:var(--ink-3);font-size:13px;text-decoration:underline;padding:6px 0}
+.linkbtn{background:none;border:0;color:var(--ink-3);font-size:13px;text-decoration:underline;padding:12px 6px;min-height:44px;min-width:44px}
 .fine{font-size:12px;color:var(--ink-3);line-height:1.7;margin-top:20px}
 .meta{display:flex;gap:18px;font-size:14px;color:var(--ink-3);margin:16px 0 0}
 .meta b{color:var(--ink)}
@@ -217,6 +217,12 @@ textarea.field{min-height:96px;resize:vertical;line-height:1.6}
 .mark b{color:var(--ink-2);font-weight:700;text-align:right}
 .toggle{display:flex;justify-content:center;margin:-6px 0 14px}
 .share{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.sh{min-height:48px}
+.teamcta{margin:4px 0 12px;padding:16px;border-radius:18px;background:color-mix(in srgb,var(--c-a) 14%,var(--surface));border:1px solid color-mix(in srgb,var(--c-a) 40%,transparent)}
+.teamcta .tc-h{font-weight:900;font-size:18px;margin-bottom:6px}
+.igsteps{margin:4px 0 0;padding-left:22px;font-size:14px;line-height:1.8;color:var(--ink)}
+.teamcta p{margin:0 0 12px;font-size:14px;line-height:1.7;color:var(--ink-2,var(--ink))}
+.backq{min-height:44px}
 .sh{display:flex;align-items:center;justify-content:center;gap:7px;padding:13px 4px;border-radius:14px;border:1px solid var(--line-2);background:var(--surface);text-decoration:none;color:var(--ink);font-size:14px;font-weight:700}
 .sh svg{width:20px;height:20px}
 .sh:hover{background:var(--surface-2)}
@@ -266,7 +272,7 @@ textarea.field{min-height:96px;resize:vertical;line-height:1.6}
 @keyframes dashblink{50%{border-color:rgba(255,255,255,.35)}}
 .blueprint small{display:block;color:var(--ink-3);font-size:11px}
 .stars{display:flex;gap:6px;justify-content:center;margin:12px 0}
-.stars button{background:none;border:0;font-size:34px;line-height:1;color:var(--line-2);transition:transform .15s,color .2s;padding:2px}
+.stars button{background:none;border:0;font-size:34px;line-height:1;color:var(--line-2);transition:transform .15s,color .2s;padding:5px;min-width:46px;min-height:46px}
 .stars button.on{color:#FFD84D;text-shadow:0 0 14px rgba(255,216,77,.6)}
 .stars button:active{transform:scale(.85)}
 .dex{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
@@ -280,7 +286,8 @@ textarea.field{min-height:96px;resize:vertical;line-height:1.6}
 .form label{font-size:14px;color:var(--ink-2);display:grid;gap:6px}
 .form label small{color:var(--ink-3)}
 .check{display:flex!important;grid-template-columns:none;gap:10px;align-items:flex-start;font-size:14px;line-height:1.6}
-.check input{width:20px;height:20px;margin-top:2px;flex:none;accent-color:var(--c-a)}
+.check{min-height:44px;padding:4px 0;cursor:pointer}
+.check input{width:24px;height:24px;margin-top:2px;flex:none;accent-color:var(--c-a)}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{border:1px solid var(--line-2);background:var(--surface);border-radius:999px;padding:9px 14px;font-size:14px;color:var(--ink-2)}
 .chip[aria-pressed="true"]{color:#141218;background:var(--ink);border-color:var(--ink)}
@@ -314,7 +321,9 @@ textarea.field{min-height:96px;resize:vertical;line-height:1.6}
 .more{display:flex;flex-direction:column;align-items:center;gap:4px;width:100%;margin:2px 0 0;padding:14px;border:0;background:none;color:var(--ink);font-size:17px;font-weight:700}
 .more span{font-size:13px;font-weight:500;color:var(--ink-3);animation:nudge 1.6s ease-in-out infinite}
 @keyframes nudge{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
-.ctop{position:sticky;top:0;z-index:4;margin:0 -20px 8px;padding:8px 20px 6px;background:linear-gradient(180deg,var(--bg) 82%,transparent);}
+.ctop{position:sticky;top:0;z-index:4;margin:0 -20px 8px;padding:4px 20px 4px;background:linear-gradient(180deg,var(--bg) 82%,transparent);}
+.ctop .stage.small .toy{width:96px;height:96px}
+.ctop .stage.small .halo{width:120px;height:60px}
 .stage.small .toy{width:130px;height:130px;margin:0}
 .stage.small .halo{bottom:6px;width:160px;height:80px}
 .ctop .tag{margin:2px 0 0}
@@ -550,7 +559,7 @@ function capsuleSVG(){
     <g id="capTop"><path d="M15 75 A60 60 0 0 1 135 75 Z" fill="url(#capS)"/><path d="M40 46 A40 40 0 0 1 70 28" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round"/><rect x="12" y="71" width="126" height="7" rx="3.5" fill="#fff"/></g>`;
 }
 /* ===================== CONTENT ===================== */
-const COURSE_NAME = '《別急著找答案，用設計思考，打造你自己的人生藍圖》';
+const COURSE_NAME = '《別急著找答案！善用設計思考，打造你自己的人生藍圖》';
 const COURSE_URL = 'https://www.pressplay.cc/link/s/37DF5A34'; // 10/14 扭蛋島專用短網址（已帶 utm_source=dream-island、utm_medium=game、utm_campaign=course1）
 const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwJ_2eDRfawGsz3twtwpWlyaqQlvry6iNZ2KBlvoJUpfZCrkMHkAdaCi37uKUJvHvk/exec'; // Apps Script（dreamisland.chacha@gmail.com 部署）
 const CONTACT = 'dreamisland.chacha@gmail.com';
@@ -639,13 +648,13 @@ const TOTAL_Q = QUESTIONS.length; // 10
 // 卡點 → 課程集數（課程部對照，誠實版）
 const EPISODES = {
   direction:{ep:3, title:'找回讓你有能量的線索', line:'記下你最有勁和最被榨乾的時刻，從裡面找線索。它不會直接給你方向，但會讓你知道該往哪裡看。'},
-  value:{ep:2, title:'看清楚你現在站在哪裡', line:'把工作、財務、成長這幾個面向的分數攤開來看，先弄清楚卡住的是哪一塊。（這門課不教加薪或個人品牌）'},
+  value:{ep:2, title:'看清楚你現在站在哪裡', line:'把錢、時間、成長這幾個面向的分數攤開來看，先看清楚哪一塊最卡，再決定下一步要試什麼。'},
   people:{ep:2, title:'看清楚你現在站在哪裡', line:'在人際這個面向打分數，看清楚是哪一段關係在消耗你。（這門課不教溝通技巧）'},
   future:{ep:7, title:'走出去，跟人聊', line:'帶著你想到的幾條路，去找走過類似路口的人聊，讓不確定慢慢變小。'},
   compare:{ep:4, title:'你問的問題，可能本來就問錯了', line:'把「為什麼我不如他」改寫成一個問得出答案的問題。'},
-  family:{ep:6, title:'不要只有一條路', line:'其中一條路是「如果什麼都不用擔心」，它會幫你分開別人要的和你自己要的。'},
+  family:{ep:6, title:'不要只有一條路', line:'想出不只一個可能的方向，把別人期待的和你自己想要的分開來看，再挑一個做成小小的原型去試。'},
   time:{ep:1, title:'先把腦袋裡的聲音寫下來', line:'第一集只要四個句子，十分鐘寫得完。整門課大約兩個半小時，加上寫工作單的時間。'},
-  restart:{ep:6, title:'不要只有一條路', line:'其中一條路是「如果這條路消失了」，幫你在重新出發前，多看見幾種可能。'},
+  restart:{ep:6, title:'不要只有一條路', line:'重新出發前，先想出更多可能的方向，再挑一個做成小小的原型去試，不用一次就選對。'},
   explore:{ep:5, title:'讓思考跑得比你預期更遠', line:'從一個問題往外挖三層，標出讓你心動的方向。'},
 };
 const NOT_FOR = ['你想要有人直接告訴你「你應該做什麼」。這門課不會給你答案，答案只有你自己能給。',
@@ -849,7 +858,7 @@ function typeOf(code){ return TYPES[code]; }
 
 const STUCK = {
   direction:{name:'方向不明', note:'覺得悶、說不出哪裡不對，常常是心裡已經在醞釀下一步的訊號。方向通常不是想出來的，而是從一次次小小的嘗試裡慢慢浮現。'},
-  value:{name:'價值沒被看見', note:'覺得自己值得更多，代表你清楚自己的價值。接下來要做的，是找到讓別人也看得見的方式。'},
+  value:{name:'錢與付出的落差', note:'收入卡住的時候，最容易一直想著「要更努力」。先看清楚卡住的是錢、時間還是成長，你會更知道下一步該試什麼。'},
   people:{name:'人際的消耗', note:'會被關係消耗，是因為你在乎。先看清楚是哪一段關係在拿走你的力氣，你就能把力氣拿回來，留給真正重要的人和事。'},
   future:{name:'未來的不確定', note:'對未來感到不確定，是變化很快的時代裡很正常的感覺。好消息是，不確定也代表還有很多可能，路還沒被寫死。'},
   compare:{name:'比較的壓力', note:'你羨慕的樣子，往往藏著你自己想要的東西。把那份羨慕翻過來看，它會變成一張指向你自己的地圖。'},
@@ -862,11 +871,11 @@ const STUCK = {
 const CROSS = {
   direction:{P:'對習慣先想清楚再走的你來說，方向不明特別難受。試試看反過來：先做一件小事，讓答案有機會來找你。',
     D:'你習慣邊做邊找，只是最近做的事好像都沒帶來答案。也許不是要做更多，而是停下來看看，哪一件事讓你最有感覺。'},
-  value:{P:'你習慣把事情準備得很完整，卻不一定會主動讓人看見。這一次，試著在還沒完美的時候，就把成果拿出來。',
-    D:'你做了很多，但做的事不一定會自己說話。試著幫你的成果說一句話，讓別人知道它為什麼重要。'},
+  value:{P:'你習慣先把事情想清楚。收入的事也一樣，先把錢、時間、成長各自卡在哪裡寫下來，答案常常比想像中具體。',
+    D:'你習慣先動起來，但多做一點不一定能解決收入的問題。先停一下，看看哪一件事最值得你投入時間，再挑一個方向去試。'},
   people:{P:'你會在心裡反覆想那些讓你累的對話。試著把它寫下來，你會更清楚，哪一段關係值得你繼續花力氣。',
     D:'你習慣直接處理問題，所以人際的拉扯特別消耗你。有些關係不需要馬上解決，先拉開一點距離，也是一種處理。'},
-  future:{P:'你想把未來想清楚，可是世界變得比想的還快。也許可以先畫出三條可能的路，而不是等一條確定的答案。',
+  future:{P:'你想把未來想清楚，可是世界變得比想的還快。也許可以先想出幾個可能的方向，挑一個做成小小的原型去試，而不是等一個確定的答案。',
     D:'你願意邊走邊看，這在變動的時代是很大的優勢。只要偶爾停下來校準方向，你會比多數人更快找到自己的位置。'},
   compare:{P:'你會把別人的成就拿來和自己的計畫比，越比越覺得落後。但你的時間表是你自己的，別人只是走在另一條路上。',
     D:'看到別人做得好，你的第一反應可能是「我也要」。先停一下問問自己：我羨慕的是那個結果，還是那種生活？'},
@@ -1116,11 +1125,14 @@ function burst(){
 }
 
 /* ================= RESULT (簡易報告) ================= */
-function shareURL(){
+// ★ 分享網址只改這一行（之後換成 https://island.designthinking.com.tw/ 之類的短網域）
+const SHARE_BASE_URL = 'https://designthinking-powwow.github.io/dream-island/';
+function shareURL(src){
   const {code}=typeCode();
   const p=new URLSearchParams({t:code, a:S.animal, c:S.color});
   if(S.fruit) p.set('fr',S.fruit); if(S.aOther) p.set('ao',S.aOther); if(S.fOther) p.set('fo',S.fOther); if(S.name) p.set('n',S.name);
-  return location.origin + location.pathname + '?' + p.toString();
+  if(src){ p.set('utm_source',src); p.set('utm_medium','share'); p.set('utm_campaign','dream_island'); }
+  return SHARE_BASE_URL + '?' + p.toString();
 }
 function teamBlock(code){
   const f=S.friend; if(!f) return '';
@@ -1135,29 +1147,66 @@ function teamBlock(code){
     <div style="margin-left:auto;text-align:right"><div class="score">${score}%</div><div style="font-size:12px;color:var(--ink-3)">你和${fname}</div></div></div>
     <p style="margin:12px 0 0;font-size:15px;line-height:1.8">${lines.join('<br>')}</p></div></div>`;
 }
-function shareBtns(prefix){ return `<div class="share">
+function shareBtns(prefix){ return `<div class="teamcta">
+      <div class="tc-h">👯 找朋友測組隊默契</div>
+      <p>把你的守護獸傳給朋友，他玩完就會看到你們兩隻的<b>組隊默契分數</b>，還有一起做事時誰負責規劃、誰負責開局。</p>
+      <button class="btn wide" id="${prefix}Team">傳給朋友，測我們的默契</button></div>
+    <div class="share">
       <a class="sh" id="${prefix}Line" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="#06C755"><path d="M12 3C6.5 3 2 6.6 2 11c0 3.9 3.5 7.2 8.3 7.9.3.1.8.2.9.5.1.3.1.7 0 1l-.1.9c0 .3-.2 1 .9.5s5.9-3.5 8-6C21.4 14.3 22 12.7 22 11c0-4.4-4.5-8-10-8z"/></svg>LINE</a>
+      <a class="sh" id="${prefix}Th" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16.5 11.2c-.3-2.6-1.9-4-4.4-4-2.9 0-4.6 2.1-4.6 5s1.7 5 4.6 5c2 0 3.4-1 4-2.6"/><path d="M16.6 11c0 6.5-9.6 6.2-9.6 1"/><circle cx="12" cy="12" r="9.5"/></svg>Threads</a>
       <a class="sh" id="${prefix}Fb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="#4B8BFF"><path d="M14 8.5V6.8c0-.8.5-1 .9-1H17V2.1L14.2 2C11 2 10.4 4.4 10.4 6v2.5H8V12h2.4v10H14V12h2.7l.4-3.5H14z"/></svg>臉書</a>
-      <button class="sh" id="${prefix}Ig"><svg viewBox="0 0 24 24" fill="none" stroke="#FF6FB5" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#FF6FB5"/></svg>IG 限動</button></div>`; }
+      <button class="sh" id="${prefix}Ig"><svg viewBox="0 0 24 24" fill="none" stroke="#FF6FB5" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#FF6FB5"/></svg>IG 限動</button>
+      <button class="sh" id="${prefix}Copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>複製連結</button>
+      <button class="sh" id="${prefix}More"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/></svg>更多</button></div>`; }
+async function copyText(t){
+  try{ await navigator.clipboard.writeText(t); }
+  catch(e){ const a=document.createElement('textarea'); a.value=t; a.style.position='fixed'; a.style.opacity='0'; document.body.appendChild(a); a.select(); try{document.execCommand('copy');}catch(_){} a.remove(); }
+  toast('已複製連結，貼給朋友吧！');
+}
+async function webShare(text, url, fallbackCopy){
+  if(navigator.share){ try{ await navigator.share({title:'夢遊扭蛋島', text, url}); return true; }catch(e){ if(e && e.name==='AbortError') return true; } }
+  if(fallbackCopy){ await copyText(text+' '+url); }
+  return false;
+}
 function bindShare(prefix, text){
-  const url=shareURL();
-  $('#'+prefix+'Fb').href='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(url);
-  $('#'+prefix+'Line').href='https://social-plugins.line.me/lineit/share?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(text);
-  $('#'+prefix+'Fb').onclick=$('#'+prefix+'Line').onclick=()=>record('share',{where:prefix});
+  const u=src=>shareURL(src);
+  $('#'+prefix+'Fb').href='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(u('facebook'));
+  $('#'+prefix+'Line').href='https://social-plugins.line.me/lineit/share?url='+encodeURIComponent(u('line'))+'&text='+encodeURIComponent(text);
+  $('#'+prefix+'Th').href='https://www.threads.net/intent/post?text='+encodeURIComponent(text+' '+u('threads'));
+  $('#'+prefix+'Fb').onclick=()=>record('share',{where:prefix+'Fb'});
+  $('#'+prefix+'Line').onclick=()=>record('share',{where:prefix+'Line'});
+  $('#'+prefix+'Th').onclick=()=>record('share',{where:prefix+'Th'});
+  $('#'+prefix+'Copy').onclick=()=>{ record('share',{where:prefix+'Copy'}); copyText(u('copy')); };
+  const more=$('#'+prefix+'More');
+  if(!navigator.share) more.style.display='none';
+  more.onclick=()=>{ record('share',{where:prefix+'More'}); webShare(text, u('webshare'), true); };
+  $('#'+prefix+'Team').onclick=()=>{ record('share',{where:prefix+'Team'});
+    webShare(`我轉出了「${dispName()}」！你也來轉一隻，看看我們的組隊默契有幾分？`, u('team'), true); };
   $('#'+prefix+'Ig').onclick=()=>shareStory(prefix);
   storyFile(); // 先在背景把限動圖畫好，按下去才能立刻叫出分享選單
 }
 
 /* ---------- IG 限動圖（1080×1920） ---------- */
-const GAME_HOST = 'designthinking-powwow.github.io/dream-island'; // 換成短網址時改這裡
+const GAME_HOST = SHARE_BASE_URL.replace(/^https?:\/\//,'').replace(/\/$/,''); // 由 SHARE_BASE_URL 自動算出
 let storyCache = null;
 function storyFile(){
-  const key = [S.animal,S.fruit,S.color,S.aOther,S.fOther,S.name].join('|');
+  const key = [S.animal,S.fruit,S.color,S.aOther,S.fOther,S.name,typeCode().code].join('|');
   if(storyCache && storyCache.key===key) return storyCache.p;
   const p = drawStory().then(blob=>new File([blob],'dream-island.png',{type:'image/png'}));
   storyCache = {key, p};
   return p;
 }
+function balancedLines(g, text, maxW){
+  // 先算需要幾行，再平均分配，避免最後一行只剩 1–2 個字
+  const chars=[...text]; const total=g.measureText(text).width; const n=Math.max(1,Math.ceil(total/maxW));
+  const target=total/n; const out=[]; let cur='';
+  for(const ch of chars){ if(cur && g.measureText(cur+ch).width>Math.min(maxW,target*1.06) && out.length<n-1){ out.push(cur); cur=ch; } else cur+=ch; }
+  out.push(cur);
+  // 收尾標點不要單獨開頭
+  for(let i=1;i<out.length;i++){ while(out[i] && /^[，。、」！？]/.test(out[i])){ out[i-1]+=out[i][0]; out[i]=out[i].slice(1); } }
+  return out.filter(Boolean);
+}
+function roundRect(g,x,y,w,h,r){ g.beginPath(); g.moveTo(x+r,y); g.arcTo(x+w,y,x+w,y+h,r); g.arcTo(x+w,y+h,x,y+h,r); g.arcTo(x,y+h,x,y,r); g.arcTo(x,y,x+w,y,r); g.closePath(); }
 async function drawStory(){
   const W=1080, H=1920, cv=document.createElement('canvas'); cv.width=W; cv.height=H;
   const g=cv.getContext('2d');
@@ -1190,26 +1239,31 @@ async function drawStory(){
   g.fillStyle=tg; g.font=`900 58px ${F}`; g.fillText(T.name,W/2,1380);
   // 台詞（逐字換行）
   g.fillStyle='#F5F3F8'; g.font=`500 42px ${F}`;
-  const lines=[]; let cur='';
-  for(const ch of '「'+quote+'」'){ if(g.measureText(cur+ch).width>820){ lines.push(cur); cur=ch; } else cur+=ch; }
-  lines.push(cur); lines.slice(0,3).forEach((l,i)=>g.fillText(l,W/2,1480+i*62));
+  const lines=balancedLines(g,'「'+quote+'」',820);
+  lines.slice(0,3).forEach((l,i)=>g.fillText(l,W/2,1460+i*62));
   // 底部邀請
-  g.fillStyle='#F5F3F8'; g.font=`900 54px ${F}`; g.fillText('你心裡住的是哪一隻？',W/2,1690);
-  g.fillStyle='#BDB7C9'; g.font=`500 32px ${F}`; g.fillText(GAME_HOST,W/2,1750);
+  g.fillStyle='#F5F3F8'; g.font=`900 50px ${F}`; g.fillText('你心裡住的是哪一隻？',W/2,1668);
+  // 底部：只放遊戲名稱，方便搜尋（限動用手機看，QR 掃不到；連結交給 IG 的「連結」貼紙）
+  g.fillStyle='#FFD84D'; g.font=`900 44px ${F}`; g.fillText('夢遊扭蛋島｜測測你心裡的守護獸',W/2,1770);
   return await new Promise(res=>cv.toBlob(res,'image/png'));
 }
 async function shareStory(prefix){
   record('share',{where:prefix+'Ig'});
+  const link=shareURL('ig_story');
+  try{ await navigator.clipboard.writeText(link); }catch(e){ try{ const a=document.createElement('textarea'); a.value=link; a.style.position='fixed'; a.style.opacity='0'; document.body.appendChild(a); a.select(); document.execCommand('copy'); a.remove(); }catch(_){} }
   let file;
   try{ file=await storyFile(); }catch(e){ toast('限動圖產生失敗，請再試一次。'); storyCache=null; return; }
-  if(navigator.canShare && navigator.canShare({files:[file]})){
-    try{ await navigator.share({files:[file]}); return; }
-    catch(e){ if(e && e.name==='AbortError') return; }
-  }
   const u=URL.createObjectURL(file);
-  modal(`<p style="margin:0 0 10px;color:var(--ink)"><b>你的限動圖做好了</b></p>
-    <img src="${u}" alt="限動圖" style="max-width:100%;max-height:60vh;border-radius:14px;display:block;margin:0 auto">
-    <p style="margin:10px 0 0;font-size:13px">手機：長按圖片儲存，再到 IG 發限動。<br>電腦：<a href="${u}" download="dream-island.png">下載圖片</a></p>`);
+  const canFile = !!(navigator.canShare && navigator.canShare({files:[file]}));
+  modal(`<p style="margin:0 0 8px;color:var(--ink)"><b>限動圖做好了，遊戲連結也幫你複製好了</b></p>
+    <ol class="igsteps"><li>存下這張圖（或按下面的「分享圖片」）</li><li>在 IG 限動貼上這張圖</li><li>加「連結」貼紙，貼上已複製的網址</li></ol>
+    <img src="${u}" alt="限動圖" style="max-width:100%;max-height:46vh;border-radius:14px;display:block;margin:10px auto">
+    <div class="center" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+      ${canFile?'<button class="btn" id="igShareFile" type="button">分享圖片</button>':''}
+      <a class="btn" href="${u}" download="dream-island.png" style="text-decoration:none">下載圖片</a></div>
+    <p style="margin:10px 0 0;font-size:13px">手機也可以長按圖片儲存。</p>`);
+  const b=document.getElementById('igShareFile');
+  if(b) b.onclick=async(e)=>{ e.stopPropagation(); try{ await navigator.share({files:[file]}); }catch(err){} };
 }
 function confetti(){
   const cs=['#FF5FD2','#3DF5D0','#F2FF4D','#8B5CFF','#FF9A3D','#fff'];
@@ -1250,7 +1304,7 @@ function renderForest(){
 }
 function nod(){ pulse($('#comp'),'nod'); }
 function qSingle(head, top, prompt, labels, onPick){
-  render(`${head}<div class="qcard">${top}<h2>${prompt}</h2>
+  render(`${zoneBar()}${head}<div class="qcard">${top}<h2>${prompt}</h2>
     <div class="choices" id="ch">${labels.map((l,i)=>`<button class="choice" data-i="${i}" aria-pressed="false">${l}</button>`).join('')}</div></div>`);
   let done=false;
   $('#ch').onclick=e=>{
@@ -1263,11 +1317,12 @@ function qSingle(head, top, prompt, labels, onPick){
 
 /* ================= SCORING ================= */
 function typeCode(){
-  const A=S.answers; let code=''; const conf=[];
+  const A=S.answers; let code=''; const conf=[]; const tie=[];
   for(let i=0;i<4;i++){ const [p0,p1]=DIM_PAIRS[i]; const a=A[p0], b=A[p1];
-    if(a.v===b.v){ code+=a.v; conf.push(true); }
-    else { code += (a.w>b.w ? a.v : b.v); conf.push(false); } }
-  return {code, conf};
+    if(a.v===b.v){ code+=a.v; conf.push(true); tie.push(false); }
+    else if(a.w===b.w){ code+=a.v; conf.push(false); tie.push(true); }   // 兩題一樣強：不硬選邊，標成「兩邊都有」
+    else { code += (a.w>b.w ? a.v : b.v); conf.push(false); tie.push(false); } }
+  return {code, conf, tie};
 }
 function stuckKey(){ return PAINS[S.main].stuck; }
 function partnerCode(code){ const f={L:'I',I:'L',P:'D',D:'P'}; return code[0]+code[1]+f[code[2]]+f[code[3]]; }
@@ -1294,10 +1349,13 @@ function courseBlock(where){
 /* ================= RESULT（結果＋簡易報告，一頁讀到底） ================= */
 function renderResult(){
   setZone(3);
-  const {code, conf}=typeCode(); const T=typeOf(code); const s=stuckKey();
+  const {code, conf, tie}=typeCode(); const T=typeOf(code); const s=stuckKey();
   const rare = (S.animal==='other'||S.fruit==='other');
-  const softDims = conf.map((c,i)=>c?null:i).filter(x=>x!==null);
-  const both = softDims.length ? `<p class="soft">另外，你在「${softDims.map(i=>Object.values(DIM_WORDS[i]).join('和')).join('」「')}」之間兩邊都有，只是比較偏向${softDims.map(i=>DIM_WORDS[i][code[i]]).join('、')}。</p>` : '';
+  const tieDims = tie.map((t,i)=>t?i:null).filter(x=>x!==null);
+  const softDims = conf.map((c,i)=>(c||tie[i])?null:i).filter(x=>x!==null);
+  const both = (tieDims.length ? `<p class="soft">你在「${tieDims.map(i=>Object.values(DIM_WORDS[i]).join('和')).join('」「')}」之間<b>兩邊都有</b>，而且差不多一樣多。這代表你可以視情況切換，不必只選一邊。</p>` : '')
+    + (softDims.length ? `<p class="soft">另外，你在「${softDims.map(i=>Object.values(DIM_WORDS[i]).join('和')).join('」「')}」之間兩邊都有，只是比較偏向${softDims.map(i=>DIM_WORDS[i][code[i]]).join('、')}。</p>` : '');
+  const dimLine = code.split('').map((c,i)=>tie[i]?Object.values(DIM_WORDS[i]).join('／')+'都有':DIM_WORDS[i][c]).join('・');
   const peek = T.seen.length>34 ? T.seen.slice(0,34)+'……' : T.seen;
   const cross = CROSS[s] && CROSS[s][code[3]];
   const stuckHTML = s==='explore'
@@ -1314,11 +1372,12 @@ function renderResult(){
       </div>
       <div class="mark"><span>以設計思考設計的<br>人生探索遊戲</span><b>Design Thinking<br>POW WOW</b></div>
     </div></div>
+    <p class="disc" style="margin:2px 0 12px">這是一個幫你換個角度看看自己的反思小遊戲，不是診斷或人格測驗。像不像你，由你自己決定。</p>
     ${shareBtns('r')}
     <button class="more" id="more">牠還有話想跟你說<span>往下看 ↓</span></button>
     <p class="peek">${peek}</p>
     <div class="section" id="who"><h4>你是誰</h4><h3>你是${T.name}</h3>
-      <p class="soft" style="font-size:13px;margin-top:-6px">${dimWords(code)}</p>
+      <p class="soft" style="font-size:13px;margin-top:-6px">${dimLine}</p>
       <p><b class="lbl">別人眼中的你</b>${T.seen}</p>
       <p><b class="lbl">只有你自己知道的</b>${T.secret}</p>
       <p><b class="lbl">你可能有過這種時刻</b>${T.moment}</p>${both}
