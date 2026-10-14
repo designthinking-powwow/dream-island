@@ -905,10 +905,12 @@ const S = {animal:null, fruit:null, color:'pinkviolet', aOther:'', fOther:'', na
 /* ---------- data recording ---------- */
 // 送到 Apps Script（試算表「夢遊扭蛋島_名單」）。作答事件只帶隨機場次編號 sid、不含 Email；
 // 領取報告（unlock）只帶 Email 與分眾欄位，用另一個隨機編號，兩邊對不起來。
+// 遊戲版本：之後改題目、選項或計分時要改這個號碼，作答分頁才分得出新舊資料
+const GAME_VER = '2026-10-15';
 const SID = Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4);
 function record(evt, data){
   if(!ENDPOINT || S.restored) return;
-  const body = evt==='unlock' ? {sid:'u'+Math.random().toString(36).slice(2,12), evt, data} : {sid:SID, evt, data};
+  const body = evt==='unlock' ? {sid:'u'+Math.random().toString(36).slice(2,12), evt, data} : {sid:SID, evt, data:Object.assign({v:GAME_VER}, data)};
   try{ fetch(ENDPOINT,{method:'POST',mode:'no-cors',keepalive:true,headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)}); }catch(e){}
 }
 
@@ -1397,7 +1399,7 @@ function renderResult(){
     <p class="note">這個遊戲由線上課程${COURSE_NAME}的團隊設計。</p>
     ${DISCLAIMER}`);
   holo($('#card'));
-  bindShare('r', `我在夢遊扭蛋島轉出了「${dispName()}」，稱號是${T.name}：「${T.line}」你心裡住的是哪一隻？`);
+  bindShare('r', `我在夢遊扭蛋島轉出了「${dispName()}」，稱號是${T.name}：「${T.line}」你心裡住的是哪一隻？我們的組隊默契幾分？`);
   $('#more').onclick=()=>$('#who').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});
   bindCourse('#c_result','result');
   $('#unlock').onclick=()=>{ setZone(-1); renderForm(); };
@@ -1483,9 +1485,11 @@ function renderReport(){
   showTasks();
   $('#och').onclick=e=>{ const b=e.target.closest('[data-i]'); if(!b) return; S.orchard=ORCHARD[+b.dataset.i].id;
     $$('#och .choice').forEach(x=>x.setAttribute('aria-pressed', x===b)); pulse(b,'jelly'); showTasks(); record('orchard',{orchard:S.orchard, code}); };
-  const url=shareURL(); const text=`我在夢遊扭蛋島是${T.name}，系統說我的最佳夥伴是${P.name}。你來測測看是不是你？`;
-  $('#pLine').href='https://social-plugins.line.me/lineit/share?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(text);
-  $('#pFb').href='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(url);
+  const text=`我在夢遊扭蛋島是${T.name}，系統說我的最佳夥伴是${P.name}。你來測測看是不是你？玩完就能看我們的組隊默契幾分！`;
+  $('#pLine').href='https://social-plugins.line.me/lineit/share?url='+encodeURIComponent(shareURL('line'))+'&text='+encodeURIComponent(text);
+  $('#pFb').href='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(shareURL('facebook'));
+  $('#pLine').onclick=()=>record('share',{where:'pLine'});
+  $('#pFb').onclick=()=>record('share',{where:'pFb'});
   bindCourse('#c_report','report');
   $('#send').onclick=renderThanks;
 }
@@ -1504,9 +1508,11 @@ function renderThanks(){
     <div class="section center"><p class="soft" style="color:var(--ink-2)">把島分享給一個最近也在嘆氣的朋友：</p>
       <div class="share"><a class="sh" id="tLine" target="_blank" rel="noopener">LINE</a><a class="sh" id="tFb" target="_blank" rel="noopener">臉書</a><button class="sh" id="again">重玩一次</button></div></div>
     ${DISCLAIMER}`);
-  const url=shareURL(); const text=`我在夢遊扭蛋島轉出了「${dispName()}」，稱號是${T.name}。你心裡住的是哪一隻？`;
-  $('#tLine').href='https://social-plugins.line.me/lineit/share?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(text);
-  $('#tFb').href='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(url);
+  const text=`我在夢遊扭蛋島轉出了「${dispName()}」，稱號是${T.name}。你心裡住的是哪一隻？我們的組隊默契幾分？`;
+  $('#tLine').href='https://social-plugins.line.me/lineit/share?url='+encodeURIComponent(shareURL('line'))+'&text='+encodeURIComponent(text);
+  $('#tFb').href='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(shareURL('facebook'));
+  $('#tLine').onclick=()=>record('share',{where:'tLine'});
+  $('#tFb').onclick=()=>record('share',{where:'tFb'});
   bindCourse('#c_thanks','thanks');
   $('#again').onclick=()=>{ location.href=location.origin+location.pathname; };
 }
